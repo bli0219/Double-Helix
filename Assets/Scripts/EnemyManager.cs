@@ -11,14 +11,15 @@ public class EnemyManager : MonoBehaviour {
     public static EnemyManager Instance;
 
     Dictionary<Map, List<Enemy>> mapDict;
-    List<Enemy> map1;
+    public List<Enemy> someMap;
     public float alertRange = 2f;
 
     void Awake() {
         Instance = this;
+        
     }
 
-    public void AlertNearby(Enemy from) {
+    public void WarnNearby(Enemy from) {
         foreach (Enemy enemy in mapDict[from.map]) {
             if (Vector2.Distance(enemy.transform.position, from.transform.position) < alertRange) {
                 enemy.TurnAlert();

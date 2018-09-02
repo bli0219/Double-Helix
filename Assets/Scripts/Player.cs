@@ -20,7 +20,7 @@ public class Player : MonoBehaviour {
     }
 
     void GetArrow() {
-        foreach(GameObject a in arrows) {
+        foreach (GameObject a in arrows) {
             if (!a.activeSelf) {
                 Debug.Log("find inactive");
                 a.SetActive(true);
@@ -60,8 +60,8 @@ public class Player : MonoBehaviour {
             float charge = Mathf.Min(Time.time-chargeTime, bowChargeLimit);
             float range = charge;
             float dmg = 2f * charge;
-            arrow.GetComponent<Rigidbody2D>().AddForce(new Vector2(mouseDir.x, mouseDir.y).normalized * 500f);
-            arrow.GetComponent<Arrow>().Launch();
+            Vector2 velocity = new Vector2(mouseDir.x, mouseDir.y).normalized * 10f;
+            arrow.GetComponent<Arrow>().Launch(velocity, charge, dmg);
             arrow.transform.parent = null;
             arrow = null;
         }

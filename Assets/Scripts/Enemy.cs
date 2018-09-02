@@ -7,17 +7,31 @@ public class Enemy : MonoBehaviour {
     Hero target;
     public Map map = Map.someMap;
     public float knockDuration = 0.5f;
-    public float knockMult = 2f;
+    public float knockForce = 2f;
     public float moveSpeed = 1f;
-    bool alert = false;
+    bool attacked = false;
+    public bool alert = false;
     Rigidbody2D rb;
+    GameObject alertAnim;
     EnemyManager manager;
+
+
+    /* 
+     * alert: Yell() would be triggered with larger circle 
+     * target: 
+     */
 
     void Awake() {
         rb = GetComponent<Rigidbody2D>();
-        manager = EnemyManager.Instance;
+        alertAnim = transform.GetChild(0).gameObject;
     }
 
+    private void Start() {
+        manager = EnemyManager.Instance;
+
+        Debug.Log(manager);
+
+    }
     void Update() {
         if (alert) {
             AttackMode();
@@ -28,20 +42,34 @@ public class Enemy : MonoBehaviour {
         Vector3 dir = target.transform.position - transform.position;
         rb.velocity = new Vector2(dir.x, dir.y).normalized * moveSpeed;
     }
+    
+    //private void OnTriggerEnter2D(Collider2D other) {
+    //    if (other.tag == "Arrow") {
+    //        Vector3 knockDir = transform.position - other.transform.position;
+    //        ArrowAttack(new Vector2(knockDir.x, knockDir.y).normalized);
+    //    }
+    //}
 
-    void Attacked(Vector2 from) {
-        Knockback(from);
-        Invoke("Yell", knockDuration);
+    public void ArrowAttack(Vector2 knockDir, float force, float dmg) {
+        // substract damage
+        rb.velocity = knockDir * force;
+        Debug.Log(rb.velocity);
+        Invoke("KnockStop", 0.05f);
+        attacked = true;
+        if (!alert) {
+            Invoke("Yell", knockDuration);
+        }
         alert = true;
     }
 
-    void Knockback(Vector2 from) {
-        rb.AddForce(-from.normalized * knockMult);
+    void KnockStop() {
+        rb.velocity = Vector2.zero;
     }
 
-    void Yell() {
+    void Warn() {
         //anim
-        manager.AlertNearby(this);
+        Debug.Log(manager);
+        manager.WarnNearby(this);
     }
 
     public void SeeHero(Hero hero) {
@@ -50,7 +78,12 @@ public class Enemy : MonoBehaviour {
     }
 
     public void TurnAlert() {
-        //anim
+        alertAnim.SetActive(true);
+        Invoke("TurnOffAlertAnim", 1f);
         alert = false;
+    }
+
+    void TurnOffAlertAnim() {
+        alertAnim.SetActive(false);
     }
 }
