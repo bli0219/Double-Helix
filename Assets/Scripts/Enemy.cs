@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour {
 
     }
     void Update() {
-        if (alert) {
+        if (alert && target!=null) {
             AttackMode();
         }
     }

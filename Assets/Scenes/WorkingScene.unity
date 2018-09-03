@@ -308,6 +308,7 @@ GameObject:
   - component: {fileID: 1093218030}
   - component: {fileID: 1093218029}
   - component: {fileID: 1093218032}
+  - component: {fileID: 1093218033}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -326,9 +327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90ae50375d734c419f1d880534b5f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrowPrefab: {fileID: 1667074030026364, guid: a3c2c331da4e4e44e86d8258056a8925,
-    type: 2}
-  speed: 2
+  hero: {fileID: 1093218033}
 --- !u!212 &1093218030
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -408,6 +407,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!114 &1093218033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1093218028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a42c2fb124b326b42a9d3ed250b14d3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arrowPrefab: {fileID: 1667074030026364, guid: a3c2c331da4e4e44e86d8258056a8925,
+    type: 2}
+  speed: 2
 --- !u!1 &1626991473
 GameObject:
   m_ObjectHideFlags: 0
