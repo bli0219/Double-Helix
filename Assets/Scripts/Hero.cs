@@ -13,6 +13,8 @@ public class Hero : MonoBehaviour {
     float chargeTime = 0f;
     Vector3 faceDir;
     public float speed = 2f;
+    public float dashSpeed = 5f;
+    bool disabled = false;
 
     void Awake () {
         faceDir = Vector3.zero;
@@ -26,15 +28,20 @@ public class Hero : MonoBehaviour {
         }
     }
 
+    #region Actions
     public void MoveTowards(Vector2 dir) {
-        rb.velocity = dir * speed;
+        if (!disabled) {
+            rb.velocity = dir * speed;
+        }
     }
 
     public void RotateTowards(Vector3 point) {
-        faceDir = point - transform.position;
-        float angle = Mathf.Atan2(faceDir.y, faceDir.x) * Mathf.Rad2Deg;
-        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 7f * Time.deltaTime);
+        if (!disabled) {
+            faceDir = point - transform.position;
+            float angle = Mathf.Atan2(faceDir.y, faceDir.x) * Mathf.Rad2Deg;
+            Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 7f * Time.deltaTime);
+        }
     }
 
     public void StartCharge() {
@@ -53,6 +60,32 @@ public class Hero : MonoBehaviour {
         arrow = null;
     }
 
+    public void Dash() {
+        if (!disabled) {
+            rb.velocity = transform.right * dashSpeed * 2f;
+            disabled = true;
+            Invoke("DashEnd", 0.1f);
+        }
+    }
+
+    void DashEnd() {
+        rb.velocity = Vector2.zero;
+        disabled = false;
+    }
+    public void Dodge() {
+        if (!disabled) {
+            rb.velocity = -transform.right * dashSpeed;
+            disabled = true;
+            Invoke("DodgeEnd", 0.1f);
+        }
+    }
+
+    void DodgeEnd() {
+        rb.velocity = Vector2.zero;
+        disabled = false;
+    }
+    #endregion
+    #region Basic Functions
     public void GetArrow() {
         foreach (GameObject a in arrows) {
             if (!a.activeSelf) {
@@ -86,4 +119,5 @@ public class Hero : MonoBehaviour {
             }
         }
     }
+    #endregion
 }

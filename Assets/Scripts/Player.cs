@@ -20,6 +20,14 @@ public class Player : MonoBehaviour {
             hero.EndCharge();
         }
 
+        if (Input.GetButtonUp("dash")) {
+            hero.Dash();
+        }
+
+        if (Input.GetButtonDown("dodge")) {
+            hero.Dodge();
+        }
+
         float hor = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
         hero.MoveTowards(new Vector2(hor, vert).normalized);
