@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
 
+    float attackRange = 2f; 
     Hero target;
     public Map map = Map.someMap;
     public float knockDuration = 0.5f;
@@ -26,23 +27,26 @@ public class Enemy : MonoBehaviour {
         alertAnim = transform.GetChild(0).gameObject;
     }
 
-    private void Start() {
-        manager = EnemyManager.Instance;
-
-        Debug.Log(manager);
+    void Update() {
 
     }
-    void Update() {
-        if (alert && target!=null) {
-            AttackMode();
+
+    void Attack(Vector2 dir) {
+        rb.velocity = dir * moveSpeed;
+    }
+
+    void ApproachTarget() {
+        
+    }
+
+    void CheckAttack() {
+        if (alert && Vector2.Distance(target.transform.position, transform.position) < attackRange) {
+            Vector2 dir = target.transform.position - transform.position;
+            Attack(dir);
         }
     }
 
-    void AttackMode() {
-        Vector3 dir = target.transform.position - transform.position;
-        rb.velocity = new Vector2(dir.x, dir.y).normalized * moveSpeed;
-    }
-    
+
     //private void OnTriggerEnter2D(Collider2D other) {
     //    if (other.tag == "Arrow") {
     //        Vector3 knockDir = transform.position - other.transform.position;
@@ -76,6 +80,16 @@ public class Enemy : MonoBehaviour {
         target = hero;
         TurnAlert();
     }
+
+    float DistanceTo(Hero hero) {
+        return (hero.transform.position - transform.position).magnitude;
+    }
+
+    Vector2 DirectionTo(Hero hero) {
+        Vector3 dir = hero.transform.position - transform.position;
+        return new Vector2(dir.x, dir.y).normalized;
+    }
+
 
     public void TurnAlert() {
         alertAnim.SetActive(true);

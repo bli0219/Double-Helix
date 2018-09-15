@@ -6,18 +6,21 @@ public class Player : MonoBehaviour {
 
     Vector3 mousePos = Vector3.zero;
     public Hero hero;
+    bool RT = false;
 
 	void Update () {
-        mousePos = Input.mousePosition;
-        mousePos.z = 0f;
-        Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
-        hero.RotateTowards(mousePosWorld);
+        //mousePos = Input.mousePosition;
+        //mousePos.z = 0f;
+        //Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
+        //hero.RotateTowards(mousePosWorld);
 
-        if (Input.GetButtonDown("bow")) {
+        if (Input.GetAxis("bow") > 0f && !RT) {
             hero.StartCharge();
+            RT = true;
         }
-        if (Input.GetButtonUp("bow")) {
+        if (Input.GetAxis("bow") == 0f && RT) {
             hero.EndCharge();
+            RT = false;
         }
 
         if (Input.GetButtonUp("dash")) {
@@ -28,8 +31,22 @@ public class Player : MonoBehaviour {
             hero.Dodge();
         }
 
-        float hor = Input.GetAxis("Horizontal");
-        float vert = Input.GetAxis("Vertical");
-        hero.MoveTowards(new Vector2(hor, vert).normalized);
-	}
+        float moveX = Input.GetAxis("Horizontal");
+        float moveY = Input.GetAxis("Vertical");
+        hero.MoveTowards(new Vector2(moveX, moveY).normalized);
+        
+
+        if (RT) {
+            float aimX = Input.GetAxis("AimX");
+            float aimY = Input.GetAxis("AimY");
+            hero.RotateToDir(new Vector2(aimX, aimY));
+            Debug.Log(aimX + " " + aimY);
+        }
+
+
+
+
+
+
+    }
 }

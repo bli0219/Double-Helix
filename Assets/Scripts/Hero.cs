@@ -15,6 +15,8 @@ public class Hero : MonoBehaviour {
     public float speed = 2f;
     public float dashSpeed = 5f;
     bool disabled = false;
+    bool aiming = false;
+    bool dashing = false;
 
     void Awake () {
         faceDir = Vector3.zero;
@@ -28,19 +30,43 @@ public class Hero : MonoBehaviour {
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.tag == "Enemy") {
+            if (dashing) {
+                Debug.Log("Stop");
+                rb.velocity = Vector2.zero;
+            } else {
+                Debug.Log("not dashing");
+            }
+        }
+    }
+
     #region Actions
     public void MoveTowards(Vector2 dir) {
         if (!disabled) {
             rb.velocity = dir * speed;
+            if (!aiming && dir != Vector2.zero) {
+                RotateToDir(new Vector2(dir.x, dir.y));
+            }
         }
     }
 
-    public void RotateTowards(Vector3 point) {
+    public void RotateToDir(Vector2 dir) {
+        if (dir != Vector2.zero) {
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            faceDir = new Vector2(dir.x, dir.y);
+        }
+    }
+
+    public void RotateToPoint(Vector3 point) {
         if (!disabled) {
             faceDir = point - transform.position;
+            //float angle = Mathf.Atan2(faceDir.y, faceDir.x) * Mathf.Rad2Deg;
+            //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             float angle = Mathf.Atan2(faceDir.y, faceDir.x) * Mathf.Rad2Deg;
-            Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 7f * Time.deltaTime);
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 7f * Time.deltaTime);
         }
     }
 
@@ -53,7 +79,9 @@ public class Hero : MonoBehaviour {
         float charge = Mathf.Min(Time.time - chargeTime, bowChargeLimit);
         float range = charge;
         float dmg = 2f * charge;
-        
+
+        Debug.Log("end " + faceDir);
+
         Vector2 velocity = new Vector2(faceDir.x, faceDir.y).normalized * 10f;
         arrow.GetComponent<Arrow>().Launch(velocity, charge, dmg);
         arrow.transform.parent = null;
@@ -64,6 +92,7 @@ public class Hero : MonoBehaviour {
         if (!disabled) {
             rb.velocity = transform.right * dashSpeed * 2f;
             disabled = true;
+            dashing = true;
             Invoke("DashEnd", 0.1f);
         }
     }
@@ -71,11 +100,14 @@ public class Hero : MonoBehaviour {
     void DashEnd() {
         rb.velocity = Vector2.zero;
         disabled = false;
+        dashing = false;
+
     }
     public void Dodge() {
         if (!disabled) {
             rb.velocity = -transform.right * dashSpeed;
             disabled = true;
+            dashing = true;
             Invoke("DodgeEnd", 0.1f);
         }
     }
@@ -83,6 +115,8 @@ public class Hero : MonoBehaviour {
     void DodgeEnd() {
         rb.velocity = Vector2.zero;
         disabled = false;
+        dashing = false;
+
     }
     #endregion
     #region Basic Functions
