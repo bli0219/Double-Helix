@@ -14,7 +14,7 @@ public class Test : MonoBehaviour {
         }
         Debug.Log("Time for 20k " + (Time.realtimeSinceStartup - time));
         time = Time.realtimeSinceStartup;
-        for (int i = 0; i != 1000000; i++) {
+        for (int i = 0; i != 600000; i++) {
             cost += Vector2.SqrMagnitude(new Vector2(1f, -1f)) * 2f;
         }
         Debug.Log("Time for 600k " + (Time.realtimeSinceStartup - time));

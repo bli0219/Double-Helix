@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour {
 
     float attackRange = 2f; 
     Hero target;
-    public Map map = Map.someMap;
+    public Group group = Group.hill;
     public float knockDuration = 0.5f;
     public float knockForce = 2f;
     public float moveSpeed = 1f;
@@ -16,6 +16,8 @@ public class Enemy : MonoBehaviour {
     GameObject alertAnim;
     EnemyManager manager;
 
+    public float threat;
+    public float attraction;
 
     /* 
      * alert: Yell() would be triggered with larger circle 
@@ -23,6 +25,8 @@ public class Enemy : MonoBehaviour {
      */
 
     void Awake() {
+        threat = Random.Range(-5f, 5f);
+        attraction = Random.Range(-5f, 5f);
         rb = GetComponent<Rigidbody2D>();
         alertAnim = transform.GetChild(0).gameObject;
     }
@@ -45,14 +49,6 @@ public class Enemy : MonoBehaviour {
             Attack(dir);
         }
     }
-
-
-    //private void OnTriggerEnter2D(Collider2D other) {
-    //    if (other.tag == "Arrow") {
-    //        Vector3 knockDir = transform.position - other.transform.position;
-    //        ArrowAttack(new Vector2(knockDir.x, knockDir.y).normalized);
-    //    }
-    //}
 
     public void ArrowAttack(Vector2 knockDir, float force, float dmg) {
         // substract damage

@@ -17,6 +17,7 @@ public class Hero : MonoBehaviour {
     bool disabled = false;
     bool aiming = false;
     bool dashing = false;
+    public Group group = Group.hill;
 
     void Awake () {
         faceDir = Vector3.zero;
@@ -49,6 +50,10 @@ public class Hero : MonoBehaviour {
                 RotateToDir(new Vector2(dir.x, dir.y));
             }
         }
+    }
+
+    public void MoveTowards(Vector3 dir) {
+        MoveTowards(new Vector2(dir.x, dir.y));
     }
 
     public void RotateToDir(Vector2 dir) {
@@ -140,6 +145,7 @@ public class Hero : MonoBehaviour {
         arrow.transform.localRotation = Quaternion.identity;
     }
  
+    // Ask enemies to detect the hero.
     void EnemyDetection() {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 10f);
         foreach (Collider2D col in colliders) {
