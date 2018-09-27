@@ -15,12 +15,16 @@ public class Node {
 
     public Node(float posX, float posY) {
         pos = new Vector2(posX, posY);
-        g = float.MaxValue;
-        rhs = float.MaxValue;
+        //g = float.MaxValue;
+        //rhs = float.MaxValue;
         // Consistent when initialized
         neighbors = new Node[3][] {
             new Node[3], new Node[3], new Node[3]
         };
+    }
+
+    public void A_Star_Init() {
+        
     }
 
     void UpdateKeys() {

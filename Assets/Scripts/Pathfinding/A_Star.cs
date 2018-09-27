@@ -28,6 +28,7 @@ public class A_Star {
             }
         }
         start.g = 0f;
+        open.Add(start.f, start);
     }
 
     public List<Node> OptimalPath() {
