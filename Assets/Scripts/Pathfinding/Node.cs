@@ -5,9 +5,12 @@ using UnityEngine;
 public class Node {
 
     public Vector2 pos;
+    public float f;
     public float g;
     public float h;
-    public float rhs;
+    //public float rhs;
+    //public float key1;
+    //public float key2;
     public Node[][] neighbors;
 
     public Node(float posX, float posY) {
@@ -20,7 +23,17 @@ public class Node {
         };
     }
 
+    void UpdateKeys() {
+        
+    }
 
+    void UpdateG() {
+        
+    }
+
+    void UpdateH() {
+        
+    }
 
     float SqrDist(float x, float y) {
         return x * x + y * y;

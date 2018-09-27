@@ -19,6 +19,9 @@ public class Hero : MonoBehaviour {
     bool dashing = false;
     public Group group = Group.hill;
 
+
+    SortedDictionary<float ,float > dict;
+
     void Awake () {
         faceDir = Vector3.zero;
         rb = GetComponent<Rigidbody2D>();
@@ -124,6 +127,7 @@ public class Hero : MonoBehaviour {
 
     }
     #endregion
+
     #region Basic Functions
     public void GetArrow() {
         foreach (GameObject a in arrows) {
