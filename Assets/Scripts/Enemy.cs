@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour {
 
     float attackRange = 2f; 
     Hero target;
-    public Group group = Group.hill;
+    public Level level = Level.hill;
     public float knockDuration = 0.5f;
     public float knockForce = 2f;
     public float moveSpeed = 1f;

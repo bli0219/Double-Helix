@@ -17,7 +17,7 @@ public class Hero : MonoBehaviour {
     bool disabled = false;
     bool aiming = false;
     bool dashing = false;
-    public Group group = Group.hill;
+    public Level level = Level.hill;
 
 
     SortedDictionary<float ,float > dict;
