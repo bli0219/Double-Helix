@@ -6,27 +6,29 @@ using UnityEngine;
 public class Node: IComparable<Node> {
 
     public Vector2 pos;
-    public float f_cost;
+    public float f;
     public float g;
     public float h;
+    public float t;
     public Node parent; //parent has the lowest cost from start
     public List<Node> neighbors;
 
     public Node(float posX, float posY) {
         pos = new Vector2(posX, posY);
         neighbors = new List<Node>();
-        f_cost = UnityEngine.Random.Range(0f, 10f);
+        f = UnityEngine.Random.Range(0f, 10f);
     }
 
     public int CompareTo(Node other) {
-        if (f_cost < other.f_cost) return -1;
-        if (f_cost > other.f_cost) return 1;
+        if (f < other.f) return -1;
+        if (f > other.f) return 1;
         return 0;
     }
 
     public void CalcF() {
-        f_cost = g + h;
+        f = g + h;
     }
+
 
     //float SqrDist(float x, float y) {
     //    return x * x + y * y;

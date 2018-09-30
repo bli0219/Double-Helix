@@ -34,7 +34,7 @@ public class Hero : MonoBehaviour {
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other) {
+    void OnTriggerEnter2D(Collider2D other) {
         if (other.tag == "Enemy") {
             if (dashing) {
                 Debug.Log("Stop");
@@ -46,17 +46,28 @@ public class Hero : MonoBehaviour {
     }
 
     #region Actions
-    public void MoveTowards(Vector2 dir) {
+    public void MoveToPoint(Vector2 point) {
+        Vector2 dir = new Vector2(point.x - transform.position.x, point.y - transform.position.y);
+        MoveToDirection(dir);
+    }
+
+    public void MoveToPoint(Vector3 point) {
+        Vector3 dir = point - transform.position;
+        MoveToDirection(dir);
+    }
+
+    public void MoveToDirection(Vector2 dir) {
         if (!disabled) {
-            rb.velocity = dir * speed;
+            rb.velocity = dir.normalized * speed;
+            //Debug.Log("velocity " + rb.velocity);
             if (!aiming && dir != Vector2.zero) {
                 RotateToDir(new Vector2(dir.x, dir.y));
             }
         }
     }
 
-    public void MoveTowards(Vector3 dir) {
-        MoveTowards(new Vector2(dir.x, dir.y));
+    public void MoveToDirection(Vector3 dir) {
+        MoveToDirection(new Vector2(dir.x, dir.y));
     }
 
     public void RotateToDir(Vector2 dir) {
@@ -128,7 +139,7 @@ public class Hero : MonoBehaviour {
     }
     #endregion
 
-    #region Basic Functions
+    #region Utility
     public void GetArrow() {
         foreach (GameObject a in arrows) {
             if (!a.activeSelf) {

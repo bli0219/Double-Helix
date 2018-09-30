@@ -16,6 +16,7 @@ public class NodeManager : MonoBehaviour {
 
     float time = 0f;
     public List<List<Node>> nodeMap;
+    //List<List<int>> activeMap;
     //public Node[,] nodeMap;
     List<Enemy> enemies;
 
@@ -26,7 +27,6 @@ public class NodeManager : MonoBehaviour {
 
     void Awake() {
         Instance = this;
-
         time = Time.realtimeSinceStartup;
         CreateNodes();
         Debug.Log("Creating " + count + " Nodes takes " + (Time.realtimeSinceStartup - time));
@@ -51,13 +51,39 @@ public class NodeManager : MonoBehaviour {
         //Debug.Log(" takes " + (Time.realtimeSinceStartup-time));
     }
 
+    //public void EnableAndDisableNodes() {
+    //    Enemy[] enemies = EnemyManager.Instance.enemies;
+    //}
+
+    void Update() {
+
+    }
+
+    float SqrDist(Vector2 v2, Vector3 v3) {
+        return (v2.x - v3.x) * (v2.x - v3.x) + (v2.y - v3.y) * (v2.y - v3.y);
+    }
+
+    public void UpdateThreatCosts() {
+        foreach (List<Node> row in nodeMap) {
+            foreach (Node node in row) {
+                float t_cost = 0f;
+                foreach (Enemy enemy in enemies) {
+                    t_cost += enemy.threat / SqrDist(node.pos, enemy.transform.position);
+                }
+                node.t = t_cost;
+            }
+        }
+    }
+
     public Node NearestNode(GameObject go) {
         Vector3 enemyPos = go.transform.position;
         int numX = (int)Mathf.Round((enemyPos.x - bottomLeft.x) / dist);
         int numY = (int)Mathf.Round((enemyPos.y - bottomLeft.y) / dist);
 
-        if (numX < 0 || numY < 0) {
+        if (numX < 0 || numY < 0 || numX >= xCount || numY >= yCount) {
             Debug.LogError("GameObject out of node map. x=" + numX + " y=" + numY );
+            numX = Mathf.Clamp(numX, 0, xCount - 1);
+            numY = Mathf.Clamp(numY, 0, yCount - 1);
         }
         nearest = nodeMap[numY][numX];
         return nearest;
@@ -72,19 +98,25 @@ public class NodeManager : MonoBehaviour {
         xCount = Mathf.CeilToInt((topRight.x - bottomLeft.x) / dist);
         count = xCount * yCount;
         nodeMap = new List<List<Node>>();
+        //activeMap = new List<List<int>>();
 
 	    for (int y = 0; y < yCount; y ++) {
-            List<Node> row = new List<Node>();
+            List<Node> rowNode = new List<Node>();
+            //List<int> rowActive = new List<int>();
             for (int x = 0; x < xCount; x++) {
                 float _x = bottomLeft.x + x * dist;
                 float _y = bottomLeft.y + y * dist;
                 Collider2D col = Physics2D.OverlapBox(new Vector2(_x, _y), new Vector2(0.1f, 0.1f), 0f);
-                if (col != null && col.tag == "Block")
-                    row.Add(null);
-                else
-                    row.Add(new Node(_x, _y));
+                if (col != null && col.tag == "Block") {
+                    rowNode.Add(null);
+                    //rowActive.Add(0);
+                } else {
+                    rowNode.Add(new Node(_x, _y));
+                    //rowActive.Add(1);
+                }
             }
-            nodeMap.Add(row);
+            nodeMap.Add(rowNode);
+            //activeMap.Add(rowActive);
         }
     }
 

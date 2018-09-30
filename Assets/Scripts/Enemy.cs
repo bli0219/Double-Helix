@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour {
     public float knockDuration = 0.5f;
     public float knockForce = 2f;
     public float moveSpeed = 1f;
+    public Vector2 v2pos;
     bool attacked = false;
     public bool alert = false;
     Rigidbody2D rb;
@@ -29,10 +30,12 @@ public class Enemy : MonoBehaviour {
         attraction = Random.Range(-5f, 5f);
         rb = GetComponent<Rigidbody2D>();
         alertAnim = transform.GetChild(0).gameObject;
+        v2pos = new Vector2(transform.position.x, transform.position.y);
     }
 
     void Update() {
-
+        v2pos.x = transform.position.x;
+        v2pos.y = transform.position.y;
     }
 
     void Attack(Vector2 dir) {

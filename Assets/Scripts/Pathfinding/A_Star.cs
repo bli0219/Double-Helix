@@ -29,11 +29,14 @@ public class A_Star {
 
         start = _start;
         goal = _goal;
+        open.Clear();
+        closed.Clear();
         foreach (List<Node> list in map) {
             foreach (Node node in list) {
                 if (node != null) {
                     node.g = float.MaxValue;
                     node.h = Heuristic(node, goal);
+                    node.parent = null;
                 }
             }
         }
@@ -46,6 +49,7 @@ public class A_Star {
     public List<Node> RecoverPath(Node goal) {
         List<Node> path = new List<Node>();
         path.Add(goal);
+
         Node cur = current;
         while (cur != start) {
             path.Add(cur);
@@ -59,7 +63,6 @@ public class A_Star {
     public List<Node> OptimalPath() {
         int count = 0;
         int count2 = 0;
-        bool flag = true;
         while (open.Count != 0) {
             count++; 
             current = open.GetFirst();
@@ -83,6 +86,9 @@ public class A_Star {
                     neighbor.CalcF();
                 }
                 if (!open.Contains(neighbor)) { //not added
+                    if (neighbor == goal) {
+                        Debug.Log(neighbor.parent);
+                    }
                     open.Add(neighbor);
                     count2++;
                 }
@@ -97,6 +103,7 @@ public class A_Star {
     }
 
     float Heuristic(Node a, Node b) {
+        //return Vector2.SqrMagnitude(a.pos - b.pos);
         return Vector2.Distance(a.pos, b.pos);
         //return Mathf.Min(Mathf.Abs(a.pos.x - b.pos.x), Mathf.Abs(a.pos.y - b.pos.y));
     }

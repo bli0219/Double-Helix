@@ -33,7 +33,7 @@ public class Player : MonoBehaviour {
 
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
-        hero.MoveTowards(new Vector2(moveX, moveY).normalized);
+        hero.MoveToDirection(new Vector2(moveX, moveY).normalized);
         
 
         if (RT) {
