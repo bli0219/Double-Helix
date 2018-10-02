@@ -7,12 +7,23 @@ public class Player : MonoBehaviour {
     Vector3 mousePos = Vector3.zero;
     public Hero hero;
     bool RT = false;
+    public bool usingMouse;
 
 	void Update () {
-        //mousePos = Input.mousePosition;
-        //mousePos.z = 0f;
-        //Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
-        //hero.RotateTowards(mousePosWorld);
+
+        float moveX = Input.GetAxis("Horizontal");
+        float moveY = Input.GetAxis("Vertical");
+        Vector2 dir = new Vector2(moveX, moveY).normalized;
+        hero.MoveToDirection(dir);
+
+        if (usingMouse) {
+            mousePos = Input.mousePosition;
+            mousePos.z = 0f;
+            Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
+            hero.RotateToPoint(mousePosWorld);
+        } else {
+            hero.RotateToDir(dir);
+        }
 
         if (Input.GetAxis("bow") > 0f && !RT) {
             hero.StartCharge();
@@ -23,7 +34,7 @@ public class Player : MonoBehaviour {
             RT = false;
         }
 
-        if (Input.GetButtonUp("dash")) {
+        if (Input.GetButtonDown("dash")) {
             hero.Dash();
         }
 
@@ -31,9 +42,7 @@ public class Player : MonoBehaviour {
             hero.Dodge();
         }
 
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
-        hero.MoveToDirection(new Vector2(moveX, moveY).normalized);
+
         
 
         if (RT) {
@@ -43,10 +52,9 @@ public class Player : MonoBehaviour {
             Debug.Log(aimX + " " + aimY);
         }
 
-
-
-
-
+        if (Input.GetButtonDown("melee")) {
+            hero.MeleeAttack();
+        }
 
     }
 }

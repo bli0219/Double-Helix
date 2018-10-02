@@ -17,8 +17,9 @@ public class Hero : MonoBehaviour {
     bool disabled = false;
     bool aiming = false;
     bool dashing = false;
+    bool dodging = false;
     public Level level = Level.hill;
-
+    public GameObject sword;
 
     SortedDictionary<float ,float > dict;
 
@@ -26,6 +27,7 @@ public class Hero : MonoBehaviour {
         faceDir = Vector3.zero;
         rb = GetComponent<Rigidbody2D>();
         arrows = new List<GameObject>();
+        
     }
 
     void Update() {
@@ -60,9 +62,9 @@ public class Hero : MonoBehaviour {
         if (!disabled) {
             rb.velocity = dir.normalized * speed;
             //Debug.Log("velocity " + rb.velocity);
-            if (!aiming && dir != Vector2.zero) {
-                RotateToDir(new Vector2(dir.x, dir.y));
-            }
+            //if (!aiming && dir != Vector2.zero) {
+            //    RotateToDir(new Vector2(dir.x, dir.y));
+            //}
         }
     }
 
@@ -71,10 +73,12 @@ public class Hero : MonoBehaviour {
     }
 
     public void RotateToDir(Vector2 dir) {
-        if (dir != Vector2.zero) {
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            faceDir = new Vector2(dir.x, dir.y);
+        if (!disabled) { 
+            if (dir != Vector2.zero) {
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                faceDir = new Vector2(dir.x, dir.y);
+            }
         }
     }
 
@@ -109,7 +113,7 @@ public class Hero : MonoBehaviour {
 
     public void Dash() {
         if (!disabled) {
-            rb.velocity = transform.right * dashSpeed * 2f;
+            rb.velocity = transform.right * dashSpeed ;
             disabled = true;
             dashing = true;
             Invoke("DashEnd", 0.1f);
@@ -126,7 +130,7 @@ public class Hero : MonoBehaviour {
         if (!disabled) {
             rb.velocity = -transform.right * dashSpeed;
             disabled = true;
-            dashing = true;
+            dodging = true;
             Invoke("DodgeEnd", 0.1f);
         }
     }
@@ -136,6 +140,26 @@ public class Hero : MonoBehaviour {
         disabled = false;
         dashing = false;
 
+    }
+
+    public void MeleeAttack() {
+        StartCoroutine("Wave");
+    }
+
+    IEnumerator Wave() {
+        sword.SetActive(true);
+        float t0 = Time.time;
+        float delta = Time.time - t0;
+        
+        Quaternion start = Quaternion.Euler(0, 0, -30);
+        Quaternion end = Quaternion.Euler(0, 0, 30);
+        while (delta < 0.1f) {
+            sword.transform.localRotation = Quaternion.Slerp(start, end, delta /0.1f );
+            Debug.Log("waving");
+            delta = Time.time - t0;
+            yield return new WaitForSecondsRealtime(0.01f);
+        }
+        sword.SetActive(false);
     }
     #endregion
 
