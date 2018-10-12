@@ -8,27 +8,31 @@ public class Player : MonoBehaviour {
     Vector3 faceDir = Vector3.zero;
     Vector3 moveDir = Vector3.zero;
 
-    public PlayerInput playerInput;
+    public PlayerInput input;
     public Hero hero;
     bool charging = false;
     public bool usingMouse;
 
+    void Start() {
+        input = PlayerInput.instance;
+    }
+
     void GetButtonInputs() {
-        if (Input.GetButtonDown("bow") && !charging) {
+        if (input.ArrowDown() && !charging) {
             hero.StartCharge();
             charging = true;
         }
-        if (Input.GetButtonUp("bow") && charging) {
+        if (input.ArrowUp() && charging) {
             hero.EndCharge();
             charging = false;
         }
-        if (Input.GetButtonDown("dash")) {
+        if (input.DashDown()) {
             hero.Dash();
         }
-        if (Input.GetButtonDown("dodge")) {
+        if (input.DodgeDown()) {
             hero.Dodge();
         }
-        if (Input.GetButtonDown("melee")) {
+        if (input.MeleeDown()) {
             hero.MeleeAttack();
         }
     }
@@ -37,27 +41,27 @@ public class Player : MonoBehaviour {
 
     void GetAxisInputs() {
 
-        if (charging) {
-            // Don't move; face.
-            hero.StandStill();
+        // face that dir regardless
+        if (usingMouse) {
+            mousePos = Input.mousePosition;
+            mousePos.z = 0f;
+            Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
+            faceDir = mousePosWorld - transform.position;
+            hero.RotateToPoint(mousePosWorld);
+        }
 
-            if (usingMouse) {
-                mousePos = Input.mousePosition;
-                mousePos.z = 0f;
-                Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
-                faceDir = mousePosWorld - transform.position;
-                hero.RotateToPoint(mousePosWorld);
-            } else {
-                float aimX = Input.GetAxis("AimX");
-                float aimY = Input.GetAxis("AimY");
-                faceDir = new Vector2(aimX, aimY);
-                hero.RotateToDir(new Vector2(aimX, aimY));
+        if (charging) {
+            hero.StandStill();
+            if (!usingMouse) {
+                faceDir = input.Direction2();
+                hero.RotateToDir(faceDir);
             }
         } else {
-            float moveX = Input.GetAxis("Horizontal");
-            float moveY = Input.GetAxis("Vertical");
-            Vector2 dir = new Vector2(moveX, moveY).normalized;
+            Vector2 dir = input.Direction1();
             hero.MoveToDirection(dir);
+            if (!usingMouse) {
+                hero.RotateToDir(dir);
+            }
         }
     }
 

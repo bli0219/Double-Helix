@@ -17,9 +17,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - HitObject
+  - LivingObject
+  - Block
   - 
   - 
   - 

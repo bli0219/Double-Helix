@@ -64,10 +64,6 @@ public class Hero : MonoBehaviour {
     public void MoveToDirection(Vector2 dir) {
         if (!disabled) {
             rb.velocity = dir.normalized * speed;
-            //Debug.Log("velocity " + rb.velocity);
-            //if (!aiming && dir != Vector2.zero) {
-            //    RotateToDir(new Vector2(dir.x, dir.y));
-            //}
         }
     }
 

@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 58496703051101838}
   - component: {fileID: 114422808551153534}
   - component: {fileID: 50578690717857266}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1481411775789596}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.424, y: 0.036, z: -0.011278379}
+  m_LocalPosition: {x: 1.398, y: 0.019, z: -0.011278379}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4658045596812228}
@@ -145,6 +145,7 @@ MonoBehaviour:
   alert: 0
   threat: 0
   attraction: 0
+  health: 5
 --- !u!212 &212553860071531942
 SpriteRenderer:
   m_ObjectHideFlags: 1

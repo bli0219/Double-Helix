@@ -4,21 +4,25 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
 
-
-    #region interaction
-    float attackRange = 2f; 
+    #region objects
+    Rigidbody2D rb;
+    GameObject alertAnim;
+    EnemyManager manager;
     Hero target;
+
+    #endregion
+
+    #region parameters
+    float attackRange = 2f; 
     public Level level = Level.hill;
     public float knockDuration = 0.5f;
     public float knockForce = 2f;
     public float moveSpeed = 1f;
-    public Vector2 v2pos;
     bool attacked = false;
     public bool alert = false;
-    Rigidbody2D rb;
-    GameObject alertAnim;
-    EnemyManager manager;
+
     #endregion
+
     #region stats
     public float threat = 5f;
     public float attraction = 5f;
@@ -30,31 +34,47 @@ public class Enemy : MonoBehaviour {
         attraction = Random.Range(-5f, 5f);
         rb = GetComponent<Rigidbody2D>();
         alertAnim = transform.GetChild(0).gameObject;
-        v2pos = new Vector2(transform.position.x, transform.position.y);
     }
 
     void Update() {
-        v2pos.x = transform.position.x;
-        v2pos.y = transform.position.y;
+
+    }
+
+    public Vector2 PositionV2() {
+        return new Vector2(transform.position.x, transform.position.y);
     }
 
     void Attack(Vector2 dir) {
         rb.velocity = dir * moveSpeed;
     }
 
-    void ApproachTarget() {
-        
-    }
-
-    void CheckAttack() {
+    void TryAttack() {
         if (alert && Vector2.Distance(target.transform.position, transform.position) < attackRange) {
             Vector2 dir = target.transform.position - transform.position;
             Attack(dir);
         }
     }
 
-    public void ArrowAttack(Vector2 from, float force, int dmg) {
-        
+
+    #region BeingAttacked
+
+    public void BeDisabled() {
+
+    }
+
+    public void MeleeAttack(int damage) {
+        health -= damage;
+    }
+
+    void TakeDamage(int damage) {
+        health -= damage;
+        if (health <= 0) {
+            Die();
+        }
+    }
+
+    public void ArrowAttack(Vector2 from, float force, int damage) {
+
         rb.velocity = from * force;
         Invoke("KnockStop", 0.05f);
         attacked = true;
@@ -63,21 +83,23 @@ public class Enemy : MonoBehaviour {
         }
         alert = true;
 
-        health -= dmg;
+        health -= damage;
         if (health <= 0) {
             Die();
         }
-    }
-
-    void Die() {
-        // Add effects
-        gameObject.SetActive(false);
     }
 
     void KnockStop() {
         rb.velocity = Vector2.zero;
     }
 
+    void Die() {
+        // Add effects
+        gameObject.SetActive(false);
+    }
+    #endregion
+
+    #region HeroDetection
     void Warn() {
         //anim
         Debug.Log(manager);
@@ -98,7 +120,6 @@ public class Enemy : MonoBehaviour {
         return new Vector2(dir.x, dir.y).normalized;
     }
 
-
     public void TurnAlert() {
         alertAnim.SetActive(true);
         Invoke("TurnOffAlertAnim", 1f);
@@ -108,4 +129,5 @@ public class Enemy : MonoBehaviour {
     void TurnOffAlertAnim() {
         alertAnim.SetActive(false);
     }
+    #endregion
 }
