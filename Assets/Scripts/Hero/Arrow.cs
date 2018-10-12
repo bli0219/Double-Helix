@@ -5,11 +5,12 @@ using UnityEngine;
 public class Arrow : MonoBehaviour {
 
     Rigidbody2D rb;
-    float charge;
+    float chargeTime;
     float force;
-    float dmg;
+    int damage;
     bool launched = false;
     Transform spriteTransform;
+    bool firstHit = true;
 
 	void Awake () {
         spriteTransform = transform.GetChild(0);
@@ -18,38 +19,46 @@ public class Arrow : MonoBehaviour {
 
     private void OnEnable() {
         launched = false;
+        firstHit = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        HitEnemy(other);
+        if (firstHit) {
+            HitEnemy(other);
+            firstHit = false;
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other) {
-        HitEnemy(other);
+        if (firstHit) {
+            HitEnemy(other);
+            firstHit = false;
+        }
     }
 
     void HitEnemy(Collider2D other ) {
         if (other.tag == "Enemy" && launched) {
-            dmg = charge;
-            force = charge * 20f;
+            force = chargeTime * 20f;
             Vector2 dir = rb.velocity.normalized;
-            other.GetComponent<Enemy>().ArrowAttack(dir, force, dmg);
+            other.GetComponent<Enemy>().ArrowAttack(dir, force, damage);
+            CancelInvoke("Drop");
             gameObject.SetActive(false);
-            CancelInvoke();
+
         }
     }
 
-    public void Launch(Vector2 velocity, float chargeTime, float damage) {
+    public void Launch(Vector2 _velocity, float _chargeTime, int _damage) {
         launched = true;
-        charge = chargeTime;
-        dmg = damage;
-        rb.velocity = velocity;
+        chargeTime = _chargeTime;
+        damage = _damage;
+        rb.velocity = _velocity;
         Invoke("Drop", 1f);
-        Invoke("Disappear", 2f);
     }
 
     public void Drop() {
         rb.velocity = Vector2.zero;
+        firstHit = false;
+        Invoke("Disappear", 1f);
     }
 
     void Disappear() {

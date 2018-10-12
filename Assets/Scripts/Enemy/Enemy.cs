@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
 
+
+    #region interaction
     float attackRange = 2f; 
     Hero target;
     public Level level = Level.hill;
@@ -16,14 +18,12 @@ public class Enemy : MonoBehaviour {
     Rigidbody2D rb;
     GameObject alertAnim;
     EnemyManager manager;
-
-    public float threat;
-    public float attraction;
-
-    /* 
-     * alert: Yell() would be triggered with larger circle 
-     * target: 
-     */
+    #endregion
+    #region stats
+    public float threat = 5f;
+    public float attraction = 5f;
+    public int health = 5;
+    #endregion
 
     void Awake() {
         threat = Random.Range(-5f, 5f);
@@ -53,16 +53,25 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    public void ArrowAttack(Vector2 knockDir, float force, float dmg) {
-        // substract damage
-        rb.velocity = knockDir * force;
-        Debug.Log(rb.velocity);
+    public void ArrowAttack(Vector2 from, float force, int dmg) {
+        
+        rb.velocity = from * force;
         Invoke("KnockStop", 0.05f);
         attacked = true;
         if (!alert) {
             Invoke("Yell", knockDuration);
         }
         alert = true;
+
+        health -= dmg;
+        if (health <= 0) {
+            Die();
+        }
+    }
+
+    void Die() {
+        // Add effects
+        gameObject.SetActive(false);
     }
 
     void KnockStop() {

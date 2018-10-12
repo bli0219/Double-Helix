@@ -190,7 +190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a4676957353fe94f856af3f449495a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1093218028}
+  player: {fileID: 1093218028}
+  boss: {fileID: 2060739551}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -621,11 +622,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4427923443671152, guid: 54078c4fdecd7804ab57c2c03cdb8056, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0.477
+      value: 1.398
       objectReference: {fileID: 0}
     - target: {fileID: 4427923443671152, guid: 54078c4fdecd7804ab57c2c03cdb8056, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.183
+      value: 0.019
       objectReference: {fileID: 0}
     - target: {fileID: 4427923443671152, guid: 54078c4fdecd7804ab57c2c03cdb8056, type: 2}
       propertyPath: m_LocalPosition.z
@@ -955,6 +956,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bbfd430304ac424f9ddc6afa6a92013, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2060739551 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1481411775789596, guid: 54078c4fdecd7804ab57c2c03cdb8056,
+    type: 2}
+  m_PrefabInternal: {fileID: 1111881398}
 --- !u!1 &2073686567
 GameObject:
   m_ObjectHideFlags: 0

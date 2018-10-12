@@ -48,6 +48,9 @@ public class Hero : MonoBehaviour {
     }
 
     #region Actions
+    public void StandStill() {
+        rb.velocity = Vector2.zero;
+    }
     public void MoveToPoint(Vector2 point) {
         Vector2 dir = new Vector2(point.x - transform.position.x, point.y - transform.position.y);
         MoveToDirection(dir);
@@ -101,12 +104,12 @@ public class Hero : MonoBehaviour {
     public void EndCharge() {
         float charge = Mathf.Min(Time.time - chargeTime, bowChargeLimit);
         float range = charge;
-        float dmg = 2f * charge;
+        int damage = (int) (2f * charge);
 
         Debug.Log("end " + faceDir);
 
         Vector2 velocity = new Vector2(faceDir.x, faceDir.y).normalized * 10f;
-        arrow.GetComponent<Arrow>().Launch(velocity, charge, dmg);
+        arrow.GetComponent<Arrow>().Launch(velocity, charge, damage);
         arrow.transform.parent = null;
         arrow = null;
     }
@@ -155,7 +158,6 @@ public class Hero : MonoBehaviour {
         Quaternion end = Quaternion.Euler(0, 0, 30);
         while (delta < 0.1f) {
             sword.transform.localRotation = Quaternion.Slerp(start, end, delta /0.1f );
-            Debug.Log("waving");
             delta = Time.time - t0;
             yield return new WaitForSecondsRealtime(0.01f);
         }
