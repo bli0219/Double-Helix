@@ -63,7 +63,7 @@ public class Enemy : MonoBehaviour {
     }
 
     public void MeleeAttack(int damage) {
-        health -= damage;
+        TakeDamage(damage);
     }
 
     void TakeDamage(int damage) {
@@ -77,16 +77,11 @@ public class Enemy : MonoBehaviour {
 
         rb.velocity = from * force;
         Invoke("KnockStop", 0.05f);
-        attacked = true;
         if (!alert) {
+            alert = true;
             Invoke("Yell", knockDuration);
         }
-        alert = true;
-
-        health -= damage;
-        if (health <= 0) {
-            Die();
-        }
+        TakeDamage(damage);
     }
 
     void KnockStop() {
