@@ -4,18 +4,15 @@ using UnityEngine;
 
 namespace BehaviorTree {
 
-    public class SequenceNode : TreeNode {
+    public class SequenceNode : ICompositeNode {
 
-        string name;
-        TreeNode[] children;
-
-        public SequenceNode (string _name, TreeNode[] _children) {
-            children = _children;
-            name = _name;
+        public SequenceNode (string name, ITreeNode[] children) {
+            Children = children;
+            Name = name;
         } 
 
-        public NodeStatus Tick() {
-            foreach (TreeNode node in children) {
+        public override NodeStatus Tick() {
+            foreach (ITreeNode node in Children) {
                 if (node.Tick() == NodeStatus.Failure) {
                     return NodeStatus.Failure;
                 }

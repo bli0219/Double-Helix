@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 
 public class PartnerAI : MonoBehaviour {
 
@@ -19,6 +19,7 @@ public class PartnerAI : MonoBehaviour {
         //}
         FindPath();
         
+        
     }
 
     void Update() {
@@ -28,8 +29,39 @@ public class PartnerAI : MonoBehaviour {
         }
         MoveAlongPath();
     }
-    void FixedUpdate() {
-            
+
+    IEnumerator Task1(System.Action<int> follow) {
+        yield return 1;
+    }
+    public void TestMethod2(int i) {
+
+    }
+    public int TestMethod() {
+        return 0;
+    }
+    void CallFunc(Func<int> method) {
+        int i = method();
+    }
+    void Test() {
+        StartCoroutine(
+            Task1( 
+                (x) => {Debug.Log(x);}
+            )
+        );
+    }
+
+    IEnumerator ApproachTarget(System.Action action) {
+        yield return null;
+        //rb.velocity = x
+        
+    }
+
+    void Approach() {
+        //rb.velocity = x
+    }
+
+    void ApproachTarget() {
+        StartCoroutine(ApproachTarget(Approach));
     }
 
     void FindPath() {

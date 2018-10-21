@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace BehaviorTree {
-    public class SelectorNode : TreeNode {
+    public class SelectorNode : ICompositeNode {
 
-        string name;
-        TreeNode[] children;
-
-        public SelectorNode(string _name, TreeNode[] _children) {
-            children = _children;
-            name = _name;
+        public SelectorNode(string name, ITreeNode[] children) {
+            Children = children;
+            Name = name;
         }
 
-        public NodeStatus Tick() {
-            foreach (TreeNode node in children) {
+        public override NodeStatus Tick() {
+            foreach (ITreeNode node in Children) {
                 if (node.Tick()!= NodeStatus.Failure) {
                     return NodeStatus.Success;
                 }

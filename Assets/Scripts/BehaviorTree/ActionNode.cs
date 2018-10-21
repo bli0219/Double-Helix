@@ -4,18 +4,21 @@ using System;
 
 namespace BehaviorTree {
 
-    public class ActionNode : TreeNode {
+    public class ActionNode : ITreeNode {
 
         Func<NodeStatus> fn;
-        string name;
 
         public ActionNode(string _name, Func<NodeStatus> _fn) {
             fn = _fn;
-            name = _name;
+            Name = _name;
         }
 
-        public NodeStatus Tick() {
-            return fn();
+        public override NodeStatus Tick() {
+            NodeStatus status = NodeStatus.Running;
+            while (status == NodeStatus.Running) {
+                status = fn();
+            }
+            return status;
         }
     }
 }
