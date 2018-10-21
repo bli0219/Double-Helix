@@ -21,8 +21,6 @@ public class PartnerAI : MonoBehaviour {
         
     }
 
-
-
     void Update() {
         //if (Input.GetKeyDown(KeyCode.Space)) {
         if ((target.PositionV2() - goal.pos).magnitude > 0.05f ) {

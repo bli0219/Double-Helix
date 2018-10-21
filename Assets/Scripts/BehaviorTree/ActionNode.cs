@@ -1,20 +1,21 @@
 ﻿using System.Collections;
 using BehaviorTree;
+using System;
 
 namespace BehaviorTree {
-    using func = System.Func<NodeStatus>;
 
     public class ActionNode : TreeNode {
 
-        private func fn;
+        Func<NodeStatus> fn;
+        string name;
 
-        public ActionNode(func _fn) {
+        public ActionNode(string _name, Func<NodeStatus> _fn) {
             fn = _fn;
+            name = _name;
         }
 
         public NodeStatus Tick() {
             return fn();
         }
     }
-
 }
