@@ -4,9 +4,8 @@ using UnityEngine;
 
 namespace BehaviorTree {
 
-    public interface TreeNode {
-
-        NodeStatus Tick();
-
+    public enum NodeStatus {
+        Success, Running, Failure
     }
+
 }
