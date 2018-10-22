@@ -8,22 +8,23 @@ namespace BehaviorTree {
 
         // The action to perform, passed by user when initialized
         // Needs to be defined wiht clear feedback (success, failure, running)
-        Func<NodeStatus> fn;
+        readonly Func<NodeStatus> Fn;
 
-        public ActionNode(string _name, Func<NodeStatus> _fn) {
-            fn = _fn;
-            Name = _name;
+        public ActionNode(string name, Func<NodeStatus> fn, Traverser traverser) {
+            Fn = fn;
+            Name = name;
+            Traverser = traverser;
         }
 
-        // TODO: Tick() continues over frames until it finishes
-        // Current implementation finishes in a single frame
-        // Consider coroutines
-        public override NodeStatus Tick() {
-            NodeStatus status = NodeStatus.Running;
-            while (status == NodeStatus.Running) {
-                status = fn();
+        // Tick() repeats over frames until it finishes
+        public override void Tick() {
+            NodeStatus status = Fn();
+            Traverser.actionTaken = true;
+            if (status != NodeStatus.Running) {
+                Traverser.LastStatus = Fn();
+                Traverser.Finish();
             }
-            return status;
         }
+
     }
 }

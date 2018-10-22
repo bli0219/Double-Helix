@@ -5,14 +5,17 @@ using UnityEngine;
 namespace BehaviorTree {
     public abstract class ITreeNode {
 
-        public string Name { get; set; }
-        public abstract NodeStatus Tick();
+        public string Name;
 
-        public void AddToObserver() {
-            TreeObserver.Path.Push (this);
-        }
-        public void RemoveFromObserver() {
-            TreeObserver.Path.Pop();
-        }
+        // Tick() modifies global variable LastStatus as message passing
+        public abstract void Tick();
+        protected Traverser Traverser;
+
+        //public void AddToObserver() {
+        //    TreeTraverser.Path.Push (this);
+        //}
+        //public void RemoveFromObserver() {
+        //    TreeTraverser.Path.Pop();
+        //}
     }
 }

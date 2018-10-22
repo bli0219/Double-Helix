@@ -5,18 +5,22 @@ using UnityEngine;
 namespace BehaviorTree {
     public class SuccessRepeaterNode : IDecoratorNode {
 
+        bool started = false;
 
-        public SuccessRepeaterNode (string name, ITreeNode child) {
-            Name = name;
-            Child = child;
-        }
+        public SuccessRepeaterNode(string name, ITreeNode child, Traverser traverser) : base(name, child, traverser) { }
 
-        public override NodeStatus Tick() {
-            NodeStatus success = NodeStatus.Success;
-            while (success == NodeStatus.Success) {
-                success = Child.Tick();
+        public override void Tick() {
+
+            // this condition is most frequently used, so put it first
+            if (started && Traverser.LastStatus == NodeStatus.Success) { 
+                Traverser.Path.Push(Child);
+            } else if (!started) {
+                started = true;
+                Traverser.Path.Push(Child);
+            } else {
+                Traverser.LastStatus = NodeStatus.Failure;
+                Traverser.Finish();
             }
-            return NodeStatus.Failure;
         }
     }
 }

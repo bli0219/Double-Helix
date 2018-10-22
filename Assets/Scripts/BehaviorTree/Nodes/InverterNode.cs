@@ -5,15 +5,17 @@ using UnityEngine;
 namespace BehaviorTree {
     public class InverterNode : IDecoratorNode {
 
-        public InverterNode (string name, ITreeNode child) {
-            Name = name;
-            Child = child;
-        }
+        bool started = false;
+        public InverterNode(string name, ITreeNode child, Traverser traverser) : base(name, child, traverser) { }
 
-        public override NodeStatus Tick() {
-            NodeStatus status = Child.Tick();
-            if (status == NodeStatus.Success) return NodeStatus.Failure;
-            else return NodeStatus.Failure;
+        public override void Tick() {
+
+            if (!started) {
+                Traverser.Path.Push(Child);
+            } else {
+                Traverser.LastStatus = Traverser.LastStatus == NodeStatus.Success ? NodeStatus.Failure : NodeStatus.Success;
+                Traverser.Finish();
+            }
         }
 
     }

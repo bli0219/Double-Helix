@@ -5,7 +5,16 @@ using UnityEngine;
 namespace BehaviorTree {
     public abstract class ICompositeNode : ITreeNode {
 
-        public ITreeNode[] Children;
+        // inherit Name from ITreeNode
+        protected ITreeNode[] Children;
+        protected int activeChild = -1; 
+
+        protected ICompositeNode (string name, ITreeNode[] children, Traverser traverser) {
+            Name = name;
+            Children = children;
+            Traverser = traverser;
+        }
+
 
     }
 }
