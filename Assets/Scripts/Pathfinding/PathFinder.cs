@@ -23,6 +23,7 @@ public class PathFinder : MonoBehaviour {
     public List<Node> BestPath(Node start, Node goal) {
         a_star.Initialize(start, goal);
         return a_star.OptimalPath();
+        // return null if not found
     }
 
 }

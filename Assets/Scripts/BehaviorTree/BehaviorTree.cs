@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace BehaviorTree {
-    public class Traverser : MonoBehaviour {
+    public class BehaviorTree : MonoBehaviour {
 
-        public Traverser Instance;
+        public BehaviorTree Instance;
         public Stack<ITreeNode> Path;
         public ITreeNode ActiveNode;
         public NodeStatus LastStatus;

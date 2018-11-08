@@ -6,7 +6,8 @@ namespace BehaviorTree {
     public class SelectorNode : ICompositeNode {
 
         // activeChild = -1 on declaration
-        public SelectorNode(string name, ITreeNode[] children, Traverser traverser) : base (name, children, traverser) {}
+        public SelectorNode(string name, ITreeNode[] children, BehaviorTree BehaviorTree) : base (name, children, BehaviorTree) {}
+        public SelectorNode(string name, BehaviorTree BehaviorTree) : base(name, BehaviorTree) { }
 
         // use global variable to pass status
         public override void Tick() {
@@ -16,7 +17,7 @@ namespace BehaviorTree {
                 // assuming Children.Length > 0
                 try {
                     activeChild = 0;
-                    Traverser.Path.Push(Children[activeChild]);
+                    BehaviorTree.Path.Push(Children[activeChild]);
                     
                 } catch {
                     Debug.LogError("Empty Children[]");
@@ -24,20 +25,20 @@ namespace BehaviorTree {
 
             } else {
                 // some child ticked
-                if (Traverser.LastStatus == NodeStatus.Success) {
+                if (BehaviorTree.LastStatus == NodeStatus.Success) {
                     // succeed if any success
-                    Traverser.LastStatus = NodeStatus.Success;
-                    Traverser.Finish();
+                    BehaviorTree.LastStatus = NodeStatus.Success;
+                    BehaviorTree.Finish();
                 } else {
                     // no success yet
                     if (activeChild < Children.Length-1) {
                         // if last activeChild was not the last
                         activeChild++;
-                        Traverser.Path.Push(Children[activeChild]);
+                        BehaviorTree.Path.Push(Children[activeChild]);
                     } else {
                         // reached the last, still no success
-                        Traverser.LastStatus = NodeStatus.Failure;
-                        Traverser.Finish();
+                        BehaviorTree.LastStatus = NodeStatus.Failure;
+                        BehaviorTree.Finish();
                     }
                 }
 

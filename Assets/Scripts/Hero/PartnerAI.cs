@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using BehaviorTree;
 
 public class PartnerAI : MonoBehaviour {
 
     public PathFinder pathFinder;
     public Enemy target;
     public Hero hero;
-    private Node start;
-    private Node goal;
+
+    Node start;
+    Node goal;
     List<Node> path;
     float time;
 
@@ -18,13 +20,13 @@ public class PartnerAI : MonoBehaviour {
         //    target = EnemyManager.Instance.GetTarget(hero.level);
         //}
         FindPath();
-        
-        
+
+
     }
 
     void Update() {
         //if (Input.GetKeyDown(KeyCode.Space)) {
-        if ((target.PositionV2() - goal.pos).magnitude > 0.05f ) {
+        if ((target.PositionV2() - goal.pos).magnitude > 0.05f) {
             FindPath();
         }
         MoveAlongPath();
@@ -44,32 +46,46 @@ public class PartnerAI : MonoBehaviour {
     }
     void Test() {
         StartCoroutine(
-            Task1( 
-                (x) => {Debug.Log(x);}
+            Task1(
+                (x) => { Debug.Log(x); }
             )
         );
     }
 
-    IEnumerator ApproachTarget(System.Action action) {
-        yield return null;
-        //rb.velocity = x
-        
+    #region BattleAI
+
+    NodeStatus Template() {
+        return NodeStatus.Success;
     }
 
-    void Approach() {
-        //rb.velocity = x
+    NodeStatus NaiveFollow() {
+
+        if ( Vector3.Distance(hero.transform.position, target.transform.position) < 1f ) {
+            return NodeStatus.Success;
+        }
+
+        if (FindPath()) {
+            return NodeStatus.Failure;
+        }
+
+        MoveAlongPath();
+        return NodeStatus.Running;
     }
 
-    void ApproachTarget() {
-        StartCoroutine(ApproachTarget(Approach));
-    }
 
-    void FindPath() {
+
+    #endregion
+
+    #region Pathfinding
+
+
+
+    bool FindPath() {
         start = NodeManager.Instance.NearestNode(this.gameObject);
         goal = NodeManager.Instance.NearestNode(target.gameObject);
         time = Time.realtimeSinceStartup;
         path = pathFinder.BestPath(start, goal);
-        Debug.Log("A* takes " + (Time.realtimeSinceStartup - time));
+        return path != null;
     }
 
     void MoveAlongPath() {
@@ -84,4 +100,5 @@ public class PartnerAI : MonoBehaviour {
             }
         }
     }
+    #endregion
 }

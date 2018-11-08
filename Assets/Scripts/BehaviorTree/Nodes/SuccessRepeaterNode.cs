@@ -7,19 +7,19 @@ namespace BehaviorTree {
 
         bool started = false;
 
-        public SuccessRepeaterNode(string name, ITreeNode child, Traverser traverser) : base(name, child, traverser) { }
-
+        public SuccessRepeaterNode(string name, ITreeNode child, BehaviorTree BehaviorTree) : base(name, child, BehaviorTree) { }
+        public SuccessRepeaterNode(string name, BehaviorTree BehaviorTree) : base(name, BehaviorTree) { }
         public override void Tick() {
 
             // this condition is most frequently used, so put it first
-            if (started && Traverser.LastStatus == NodeStatus.Success) { 
-                Traverser.Path.Push(Child);
+            if (started && BehaviorTree.LastStatus == NodeStatus.Success) { 
+                BehaviorTree.Path.Push(Child);
             } else if (!started) {
                 started = true;
-                Traverser.Path.Push(Child);
+                BehaviorTree.Path.Push(Child);
             } else {
-                Traverser.LastStatus = NodeStatus.Failure;
-                Traverser.Finish();
+                BehaviorTree.LastStatus = NodeStatus.Failure;
+                BehaviorTree.Finish();
             }
         }
     }

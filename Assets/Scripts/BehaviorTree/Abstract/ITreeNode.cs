@@ -9,13 +9,13 @@ namespace BehaviorTree {
 
         // Tick() modifies global variable LastStatus as message passing
         public abstract void Tick();
-        protected Traverser Traverser;
+        protected BehaviorTree BehaviorTree;
 
         //public void AddToObserver() {
-        //    TreeTraverser.Path.Push (this);
+        //    TreeBehaviorTree.Path.Push (this);
         //}
         //public void RemoveFromObserver() {
-        //    TreeTraverser.Path.Pop();
+        //    TreeBehaviorTree.Path.Pop();
         //}
     }
 }
