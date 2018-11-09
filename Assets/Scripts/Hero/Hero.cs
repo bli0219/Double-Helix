@@ -23,6 +23,9 @@ public class Hero : MonoBehaviour {
     public GameObject sword;
     public int health = 100;
 
+    int attackCount = 0;
+
+
     SortedDictionary<float ,float > dict;
 
     void Awake () {
@@ -140,40 +143,37 @@ public class Hero : MonoBehaviour {
         rb.velocity = Vector2.zero;
         disabled = false;
         dashing = false;
-
     }
 
-    /*
-     * Return Success/Failure at the frame of enabling control
-     * Return Running before that
-     */
-    public NodeStatus MeleeAttack() {
-        StartCoroutine("Wave");
-    }
+    // Distinction: 
+    // BT functions are called repeatedly
+    // Unity coroutines are called once
 
     /*
      * 1. Start Animation, disable control
      * 2. Short delay
-     * 3. Activate hitbox after a short delay
+     * 3. Activate hitbox
      * 4. Very short delay
      * 5. Deactivate hitbox
      * 6. Short delay
      * 7. Enable control before animation finishes
+     * 
+     * Return Success/Failure at the frame of enabling control
+     * Return Running before that
      */
-    IEnumerator MeleeAttack() {
-        sword.SetActive(true);
-        float t0 = Time.time;
-        float delta = Time.time - t0;
-        
-        Quaternion start = Quaternion.Euler(0, 0, -30);
-        Quaternion end = Quaternion.Euler(0, 0, 30);
-        while (delta < 0.1f) {
-            sword.transform.localRotation = Quaternion.Slerp(start, end, delta /0.1f );
-            delta = Time.time - t0;
-            yield return new WaitForSecondsRealtime(0.01f);
-        }
-        sword.SetActive(false);
+
+    public NodeStatus StartMeleeAttack() {
+        disabled = true;
+        //anim.start
     }
+
+    public NodeStatus MeleeAttack() {
+        StartCoroutine("MeeleAttackCoroutine");
+        return NodeStatus.Running;
+    }
+
+
+
     #endregion
 
     #region Utility

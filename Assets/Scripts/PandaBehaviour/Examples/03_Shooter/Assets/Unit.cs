@@ -149,7 +149,7 @@ namespace Panda.Examples.Shooter
         public void MoveTo_Destination()
         {
             MoveTo(destination);
-            WaitArrival();
+           // WaitArrival();
         }
 
 

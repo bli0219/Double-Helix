@@ -29,15 +29,10 @@ public class PartnerAI : MonoBehaviour {
         var riskSwitch = new ConditionNode("riskSwitch", RiskBranch, bt);
         var riskyPlay = new SequenceNode("riskyPlay", bt);
         var safePlay = new SequenceNode("safePlay", bt);
-        var meleeAttack = new ActionNode("meleeAttack ", MeleeAttack, bt);
+        var meleeAttack = new ActionNode("meleeAttack ", hero.MeleeAttack, bt);
     }
 
     #region Action
-
-    NodeStatus MeleeAttack() {
-        hero.MeleeAttack();
-    }
-
 
     #endregion
 
