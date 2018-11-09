@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
 
     public class SequenceNode : ICompositeNode {
 
@@ -14,21 +14,21 @@ namespace BehaviorTree {
             if (activeChild == -1) { // no child ticked, ignore LastStatus, tick first child
                 try {
                     activeChild = 0;
-                    BehaviorTree.Path.Push(Children[activeChild]);
+                    BehaviorTree.path.Push(Children[activeChild]);
                 } catch {
                     Debug.LogError("Empty Children[]");
                 }
 
             } else { // some child already ticked, check result
-                if (BehaviorTree.LastStatus == NodeStatus.Failure) { // fail if any failure
-                    BehaviorTree.LastStatus = NodeStatus.Failure;
+                if (BehaviorTree.lastStatus == NodeStatus.Failure) { // fail if any failure
+                    BehaviorTree.lastStatus = NodeStatus.Failure;
                     BehaviorTree.Finish();
                 } else { // no failure yet
                     if (activeChild < Children.Length - 1) { // if last activeChild was not the last
                         activeChild++;
-                        BehaviorTree.Path.Push(Children[activeChild]);
+                        BehaviorTree.path.Push(Children[activeChild]);
                     } else { // reached the last, still no failure
-                        BehaviorTree.LastStatus = NodeStatus.Success;
+                        BehaviorTree.lastStatus = NodeStatus.Success;
                         BehaviorTree.Finish();
                     }
                 }

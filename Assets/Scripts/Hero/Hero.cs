@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MyBehaviorTree;
 
 public class Hero : MonoBehaviour {
 
@@ -20,6 +21,7 @@ public class Hero : MonoBehaviour {
     bool dodging = false;
     public Level level = Level.hill;
     public GameObject sword;
+    public int health = 100;
 
     SortedDictionary<float ,float > dict;
 
@@ -141,11 +143,24 @@ public class Hero : MonoBehaviour {
 
     }
 
-    public void MeleeAttack() {
+    /*
+     * Return Success/Failure at the frame of enabling control
+     * Return Running before that
+     */
+    public NodeStatus MeleeAttack() {
         StartCoroutine("Wave");
     }
 
-    IEnumerator Wave() {
+    /*
+     * 1. Start Animation, disable control
+     * 2. Short delay
+     * 3. Activate hitbox after a short delay
+     * 4. Very short delay
+     * 5. Deactivate hitbox
+     * 6. Short delay
+     * 7. Enable control before animation finishes
+     */
+    IEnumerator MeleeAttack() {
         sword.SetActive(true);
         float t0 = Time.time;
         float delta = Time.time - t0;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
     public class TreeBuilder {
         public BehaviorTree bt;
 
@@ -13,7 +13,7 @@ namespace BehaviorTree {
 
         void Main() {
 
-            var root = new NaiveRepeaterNode("root", bt);
+            var root = new NaiveRepeater("root", bt);
             var sel1 = new SelectorNode("Sel1", bt);
             var seq1 = new SequenceNode("Seq1", bt);
             var act1 = new ActionNode("act1", Function1, bt);

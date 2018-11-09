@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
     public class SelectorNode : ICompositeNode {
 
         // activeChild = -1 on declaration
@@ -17,7 +17,7 @@ namespace BehaviorTree {
                 // assuming Children.Length > 0
                 try {
                     activeChild = 0;
-                    BehaviorTree.Path.Push(Children[activeChild]);
+                    BehaviorTree.path.Push(Children[activeChild]);
                     
                 } catch {
                     Debug.LogError("Empty Children[]");
@@ -25,19 +25,19 @@ namespace BehaviorTree {
 
             } else {
                 // some child ticked
-                if (BehaviorTree.LastStatus == NodeStatus.Success) {
+                if (BehaviorTree.lastStatus == NodeStatus.Success) {
                     // succeed if any success
-                    BehaviorTree.LastStatus = NodeStatus.Success;
+                    BehaviorTree.lastStatus = NodeStatus.Success;
                     BehaviorTree.Finish();
                 } else {
                     // no success yet
                     if (activeChild < Children.Length-1) {
                         // if last activeChild was not the last
                         activeChild++;
-                        BehaviorTree.Path.Push(Children[activeChild]);
+                        BehaviorTree.path.Push(Children[activeChild]);
                     } else {
                         // reached the last, still no success
-                        BehaviorTree.LastStatus = NodeStatus.Failure;
+                        BehaviorTree.lastStatus = NodeStatus.Failure;
                         BehaviorTree.Finish();
                     }
                 }

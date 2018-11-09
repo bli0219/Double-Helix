@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
     public abstract class IDecoratorNode : ITreeNode  {
         // inherit Name
         public ITreeNode Child;

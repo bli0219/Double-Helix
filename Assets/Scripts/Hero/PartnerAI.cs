@@ -2,55 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using BehaviorTree;
+using MyBehaviorTree;
 
 public class PartnerAI : MonoBehaviour {
 
     public PathFinder pathFinder;
     public Enemy target;
     public Hero hero;
+    public BehaviorTree bt;
 
     Node start;
     Node goal;
     List<Node> path;
     float time;
 
+    Dictionary<string, float> parameters = new Dictionary<string, float> {
+        {"RiskThreshold", 0.5f }
+    };
+
     void Start() {
-        //if (target == null) {
-        //    target = EnemyManager.Instance.GetTarget(hero.level);
-        //}
-        FindPath();
-
-
+        BuildBT();
     }
 
-    void Update() {
-        //if (Input.GetKeyDown(KeyCode.Space)) {
-        if ((target.PositionV2() - goal.pos).magnitude > 0.05f) {
-            FindPath();
+    void BuildBT() {
+        var root = new NaiveRepeater("root", bt);
+        var riskSwitch = new ConditionNode("riskSwitch", RiskBranch, bt);
+        var riskyPlay = new SequenceNode("riskyPlay", bt);
+        var safePlay = new SequenceNode("safePlay", bt);
+        var meleeAttack = new ActionNode("meleeAttack ", MeleeAttack, bt);
+    }
+
+    #region Action
+
+    NodeStatus MeleeAttack() {
+        hero.MeleeAttack();
+    }
+
+
+    #endregion
+
+    #region Conditional
+
+    // riskThreshold <- [0,1]
+    NodeStatus RiskBranch() {
+        if (EstimateRisk() < parameters["RiskThreshold"]) {
+            return NodeStatus.Success;
+        } else {
+            return NodeStatus.Failure;
         }
-        MoveAlongPath();
+    }  
+
+    float EstimateRisk() {
+        float risk = 0;
+        risk += (100 - hero.health)/100;
+        return risk;
     }
 
-    IEnumerator Task1(System.Action<int> follow) {
-        yield return 1;
-    }
-    public void TestMethod2(int i) {
+    #endregion
 
+
+
+    void FixedUpdate() {
+        bt.Tick();
     }
-    public int TestMethod() {
-        return 0;
-    }
-    void CallFunc(Func<int> method) {
-        int i = method();
-    }
-    void Test() {
-        StartCoroutine(
-            Task1(
-                (x) => { Debug.Log(x); }
-            )
-        );
-    }
+
+
 
     #region BattleAI
 

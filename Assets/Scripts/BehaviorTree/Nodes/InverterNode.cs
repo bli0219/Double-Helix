@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
     public class InverterNode : IDecoratorNode {
 
         bool started = false;
@@ -12,9 +12,9 @@ namespace BehaviorTree {
         public override void Tick() {
 
             if (!started) {
-                BehaviorTree.Path.Push(Child);
+                BehaviorTree.path.Push(Child);
             } else {
-                BehaviorTree.LastStatus = BehaviorTree.LastStatus == NodeStatus.Success ? NodeStatus.Failure : NodeStatus.Success;
+                BehaviorTree.lastStatus = BehaviorTree.lastStatus == NodeStatus.Success ? NodeStatus.Failure : NodeStatus.Success;
                 BehaviorTree.Finish();
             }
         }

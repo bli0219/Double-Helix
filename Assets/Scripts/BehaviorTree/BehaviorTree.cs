@@ -2,68 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
     public class BehaviorTree : MonoBehaviour {
 
-        public BehaviorTree Instance;
-        public Stack<ITreeNode> Path;
-        public ITreeNode ActiveNode;
-        public NodeStatus LastStatus;
+        public Stack<ITreeNode> path;
+        public ITreeNode activeNode;
+        public NodeStatus lastStatus;
         public bool actionTaken;
+        public ITreeNode root;
 
-        void Awake() {
-            Instance = this;
-        }
-
-        void FixedUpdate() {
+        public void Tick() {
             actionTaken = false;
             while (!actionTaken) {
-                Path.Peek().Tick();
+                path.Peek().Tick();
             }
-        }
-
-        public void Observe(ITreeNode node) {
-            Path.Push(node);
-        }
-
-        public void Remove() {
-            Path.Pop();
         }
 
         public void PrintPath() {
             string str = "";
-            foreach(ITreeNode node in Path) {
+            foreach(ITreeNode node in path) {
                 str = str + node.Name + "(" + node.GetType() + ")" + " -> ";
             }
             Debug.Log(str);
         }
 
-        //public void Traverse() {
-        //    while (Path.Count > 0) {
-        //        Path.Peek().Tick();
-        //    }
-        //    Debug.Log("Traversal Ended.");
-        //}
-
         IEnumerator Traverse() {
-            while (Path.Count > 0) {
-                Path.Peek().Tick();
+            while (path.Count > 0) {
+                path.Peek().Tick();
                 yield return null;
             }
             yield return null;
             Debug.Log("Traversal Ended.");
         }
 
-        void Complete() {
-            Path.Pop();
-        }
-
         public void Finish() {
-            Path.Pop();
+            path.Pop();
         }
         public void Finish(ITreeNode node) {
             Debug.Log("Popping " + node.Name);
-            Path.Pop();
+            path.Pop();
         }
     }
 }

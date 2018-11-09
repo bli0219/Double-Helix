@@ -1,8 +1,8 @@
 ﻿using System.Collections;
-using BehaviorTree;
+using MyBehaviorTree;
 using System;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
 
     public class ActionNode : ITreeNode {
 
@@ -10,30 +10,18 @@ namespace BehaviorTree {
         // Needs to be defined wiht clear feedback (success, failure, running)
         Func<NodeStatus> Fn;
 
-        public ActionNode(string name, Func<NodeStatus> fn, BehaviorTree behaviorTree) {
+        public ActionNode(string name, Func<NodeStatus> fn, BehaviorTree tree) {
             Fn = fn;
             Name = name;
-            BehaviorTree = behaviorTree;
+            BehaviorTree = tree;
         }
-
-        // Commmenting out the two functions because assigning beforehand is preferred
-
-        //public ActionNode(string name, BehaviorTree behaviorTree) {
-        //    Name = name;
-        //    BehaviorTree = behaviorTree;
-        //}
-
-        //public ActionNode Build(Func<NodeStatus> fn) {
-        //    Fn = fn;
-        //    return this;
-        //}
 
         // Tick() repeats over frames until it finishes
         public override void Tick() {
             NodeStatus status = Fn();
-            BehaviorTree.actionTaken = true;
+            BehaviorTree.actionTaken = true; //work done for this frame
             if (status != NodeStatus.Running) {
-                BehaviorTree.LastStatus = Fn();
+                BehaviorTree.lastStatus = Fn();
                 BehaviorTree.Finish();
             }
         }

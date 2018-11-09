@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree {
+namespace MyBehaviorTree {
     public abstract class ICompositeNode : ITreeNode {
 
         // inherit Name from ITreeNode
