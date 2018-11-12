@@ -58,13 +58,6 @@ public class PartnerAI : MonoBehaviour {
 
         }
 
-        FindPath();
-        if (path == null) {
-            return NodeStatus.Failure;
-        } 
-
-        MoveAlongPath();
-        return NodeStatus.Running;
     }
 
 

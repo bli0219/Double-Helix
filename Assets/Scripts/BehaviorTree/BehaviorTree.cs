@@ -8,6 +8,7 @@ namespace MyBehaviorTree {
         public Stack<ITreeNode> path;
         public ITreeNode activeNode;
         public NodeStatus lastStatus;
+        public NodeStatus actionStatus;
         public bool actionTaken;
         public ITreeNode root;
 
