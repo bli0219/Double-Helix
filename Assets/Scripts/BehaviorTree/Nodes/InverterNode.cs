@@ -14,8 +14,8 @@ namespace MyBehaviorTree {
             if (!started) {
                 BehaviorTree.path.Push(Child);
             } else {
-                BehaviorTree.lastStatus = BehaviorTree.lastStatus == NodeStatus.Success ? NodeStatus.Failure : NodeStatus.Success;
-                BehaviorTree.Finish();
+                NodeStatus inverted = BehaviorTree.lastStatus == NodeStatus.Success ? NodeStatus.Failure : NodeStatus.Success;
+                BehaviorTree.Finish(inverted);
             }
         }
 

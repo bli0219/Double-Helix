@@ -27,8 +27,7 @@ namespace MyBehaviorTree {
                 // some child ticked
                 if (BehaviorTree.lastStatus == NodeStatus.Success) {
                     // succeed if any success
-                    BehaviorTree.lastStatus = NodeStatus.Success;
-                    BehaviorTree.Finish();
+                    BehaviorTree.Finish(NodeStatus.Success);
                 } else {
                     // no success yet
                     if (activeChild < Children.Length-1) {
@@ -37,8 +36,7 @@ namespace MyBehaviorTree {
                         BehaviorTree.path.Push(Children[activeChild]);
                     } else {
                         // reached the last, still no success
-                        BehaviorTree.lastStatus = NodeStatus.Failure;
-                        BehaviorTree.Finish();
+                        BehaviorTree.Finish(NodeStatus.Failure);
                     }
                 }
 

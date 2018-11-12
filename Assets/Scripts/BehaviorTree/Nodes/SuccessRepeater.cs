@@ -20,8 +20,7 @@ namespace MyBehaviorTree {
                 if (BehaviorTree.lastStatus == NodeStatus.Success) {
                     BehaviorTree.path.Push(Child);
                 } else {
-                    BehaviorTree.lastStatus = NodeStatus.Failure;
-                    BehaviorTree.Finish();
+                    BehaviorTree.Finish(NodeStatus.Failure);
                 }
             }
         }

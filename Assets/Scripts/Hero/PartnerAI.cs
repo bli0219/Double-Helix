@@ -6,14 +6,16 @@ using MyBehaviorTree;
 
 public class PartnerAI : MonoBehaviour {
 
-    public PathFinder pathFinder;
     public Enemy target;
     public Hero hero;
     public BehaviorTree bt;
+    public NodeStatus status;
 
     Node start;
     Node goal;
     List<Node> path;
+    public PathFinder pathFinder;
+
     float time;
 
     Dictionary<string, float> parameters = new Dictionary<string, float> {
@@ -39,64 +41,37 @@ public class PartnerAI : MonoBehaviour {
     #region Conditional
 
     // riskThreshold <- [0,1]
-    NodeStatus RiskBranch() {
-        if (EstimateRisk() < parameters["RiskThreshold"]) {
-            return NodeStatus.Success;
-        } else {
-            return NodeStatus.Failure;
-        }
-    }  
+    bool RiskBranch() {
+        return EstimateRisk() < parameters["RiskThreshold"];
+    }
 
     float EstimateRisk() {
         float risk = 0;
-        risk += (100 - hero.health)/100;
+        risk += (100 - hero.health) / 100;
         return risk;
     }
 
     #endregion
 
+    public void NaiveFollow() {
+        if (Vector3.Distance(transform.position, target.transform.position) < 1f) {
 
-
-    void FixedUpdate() {
-        bt.Tick();
-    }
-
-
-
-    #region BattleAI
-
-    NodeStatus Template() {
-        return NodeStatus.Success;
-    }
-
-    NodeStatus NaiveFollow() {
-
-        if ( Vector3.Distance(hero.transform.position, target.transform.position) < 1f ) {
-            return NodeStatus.Success;
         }
 
-        if (FindPath()) {
+        FindPath();
+        if (path == null) {
             return NodeStatus.Failure;
-        }
+        } 
 
         MoveAlongPath();
         return NodeStatus.Running;
     }
 
 
-
-    #endregion
-
-    #region Pathfinding
-
-
-
-    bool FindPath() {
+    void FindPath() {
         start = NodeManager.Instance.NearestNode(this.gameObject);
         goal = NodeManager.Instance.NearestNode(target.gameObject);
-        time = Time.realtimeSinceStartup;
-        path = pathFinder.BestPath(start, goal);
-        return path != null;
+        path = pathFinder.OptimalPath(start, goal);
     }
 
     void MoveAlongPath() {
@@ -104,12 +79,8 @@ public class PartnerAI : MonoBehaviour {
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.y), path[0].pos) < 0.05f) {
                 path.RemoveAt(0);
             } else {
-                //hero.transform.position = new Vector3(path[0].pos.x, path[0].pos.y, 0f);
-                //Debug.Log("move");
-                //Debug.Log(path[0].pos);
                 hero.MoveToPoint(path[0].pos);
             }
         }
     }
-    #endregion
 }

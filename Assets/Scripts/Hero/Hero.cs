@@ -15,15 +15,20 @@ public class Hero : MonoBehaviour {
     Vector3 faceDir;
     public float speed = 2f;
     public float dashSpeed = 5f;
+    public Level level = Level.hill;
+    public int health = 100;
+    Animator anim;
+    GameObject hitbox;
+    Enemy target;
+    public PathFinder pathFinder;
+    public PartnerAI ai;
+
+    int hitCount = 0;
     bool disabled = false;
     bool aiming = false;
     bool dashing = false;
     bool dodging = false;
-    public Level level = Level.hill;
-    public GameObject sword;
-    public int health = 100;
 
-    int attackCount = 0;
 
 
     SortedDictionary<float ,float > dict;
@@ -32,6 +37,7 @@ public class Hero : MonoBehaviour {
         faceDir = Vector3.zero;
         rb = GetComponent<Rigidbody2D>();
         arrows = new List<GameObject>();
+        hitbox = transform.GetChild(0).gameObject;
         
     }
 
@@ -97,6 +103,7 @@ public class Hero : MonoBehaviour {
         }
     }
 
+
     public void StartCharge() {
         GetArrow();
         chargeTime = Time.time;
@@ -145,32 +152,37 @@ public class Hero : MonoBehaviour {
         dashing = false;
     }
 
-    // Distinction: 
-    // BT functions are called repeatedly
-    // Unity coroutines are called once
+    public void ApproachTarget() {
 
-    /*
-     * 1. Start Animation, disable control
-     * 2. Short delay
-     * 3. Activate hitbox
-     * 4. Very short delay
-     * 5. Deactivate hitbox
-     * 6. Short delay
-     * 7. Enable control before animation finishes
-     * 
-     * Return Success/Failure at the frame of enabling control
-     * Return Running before that
-     */
+        
 
-    public NodeStatus StartMeleeAttack() {
+
+        if (ai.status != NodeStatus.Running) {
+            StartCoroutine("ApproachTargetCR");
+        }
+    }
+
+    public void MeleeAttack() {
+        if (ai.status != NodeStatus.Running) {
+            StartCoroutine("MeleeAttackCR");
+        }
+    }
+
+    // status set to be Running in Tick()
+    IEnumerator MeleeAttackCR() {
+        RotateToPoint(target.transform.position);
+        anim.SetTrigger("Melee");
         disabled = true;
-        //anim.start
+        yield return new WaitForSecondsRealtime(0.1f);
+        hitCount = 0;
+        hitbox.SetActive(true);
+        yield return new WaitForSecondsRealtime(0.05f);
+        hitbox.SetActive(false);
+        yield return new WaitForSecondsRealtime(0.2f);
+        disabled = false;
+        ai.status = hitCount > 0 ? NodeStatus.Success : NodeStatus.Failure;
     }
 
-    public NodeStatus MeleeAttack() {
-        StartCoroutine("MeeleAttackCoroutine");
-        return NodeStatus.Running;
-    }
 
 
 

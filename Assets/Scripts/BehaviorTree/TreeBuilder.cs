@@ -7,8 +7,8 @@ namespace MyBehaviorTree {
     public class TreeBuilder {
         public BehaviorTree bt;
 
-        NodeStatus Function1 () {
-            return NodeStatus.Success;
+        void Function1 () {
+
         }
 
         void Main() {
@@ -18,8 +18,8 @@ namespace MyBehaviorTree {
             var seq1 = new SequenceNode("Seq1", bt);
             var act1 = new ActionNode("act1", Function1, bt);
             var act2 = new ActionNode("act2", Function1, bt);
-            Func<NodeStatus> fn1 = Function1;
-            Func<NodeStatus> fn2 = Function1;
+            Action fn1 = Function1;
+            Action fn2 = Function1;
 
             root.Build(
                 seq1.Build(
@@ -30,7 +30,6 @@ namespace MyBehaviorTree {
                         act2
                     )
                 )
-
             );
 
         }

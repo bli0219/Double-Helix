@@ -11,6 +11,10 @@ namespace MyBehaviorTree {
         public bool actionTaken;
         public ITreeNode root;
 
+        void FixedUpdate() {
+            Tick();
+        }
+
         public void Tick() {
             actionTaken = false;
             while (!actionTaken) {
@@ -35,12 +39,9 @@ namespace MyBehaviorTree {
             Debug.Log("Traversal Ended.");
         }
 
-        public void Finish() {
+        public void Finish(NodeStatus status) {
             path.Pop();
-        }
-        public void Finish(ITreeNode node) {
-            Debug.Log("Popping " + node.Name);
-            path.Pop();
+            lastStatus = status;
         }
     }
 }

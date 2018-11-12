@@ -8,21 +8,23 @@ namespace MyBehaviorTree {
 
         // The action to perform, passed by user when initialized
         // Needs to be defined wiht clear feedback (success, failure, running)
-        Func<NodeStatus> Fn;
+        Action Task;
+        Hero agent;
 
-        public ActionNode(string name, Func<NodeStatus> fn, BehaviorTree tree) {
-            Fn = fn;
+
+        public ActionNode(string name, Action task, BehaviorTree tree) {
+            Task = task;
             Name = name;
             BehaviorTree = tree;
+            //hero = BehaviorTree.hero;
         }
 
-        // Tick() repeats over frames until it finishes
+        // Task() 
         public override void Tick() {
-            NodeStatus status = Fn();
-            BehaviorTree.actionTaken = true; //work done for this frame
-            if (status != NodeStatus.Running) {
-                BehaviorTree.lastStatus = Fn();
-                BehaviorTree.Finish();
+            hero.status = NodeStatus.Running;
+            Task();
+            if (hero.status != NodeStatus.Running) {
+                BehaviorTree.Finish(hero.status);
             }
         }
 
