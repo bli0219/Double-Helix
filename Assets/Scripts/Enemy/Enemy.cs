@@ -13,13 +13,14 @@ public class Enemy : MonoBehaviour {
     #endregion
 
     #region parameters
-    float attackRange = 2f; 
+    float attackRange = 2f;
     public Level level = Level.hill;
     public float knockDuration = 0.5f;
     public float knockForce = 2f;
     public float moveSpeed = 1f;
     bool attacked = false;
     public bool alert = false;
+
 
     #endregion
 
@@ -30,8 +31,8 @@ public class Enemy : MonoBehaviour {
     #endregion
 
     void Awake() {
-        threat = Random.Range(-5f, 5f);
-        attraction = Random.Range(-5f, 5f);
+        //threat = Random.Range(-5f, 5f);
+        //attraction = Random.Range(-5f, 5f);
         rb = GetComponent<Rigidbody2D>();
         alertAnim = transform.GetChild(0).gameObject;
     }
@@ -44,6 +45,7 @@ public class Enemy : MonoBehaviour {
         return new Vector2(transform.position.x, transform.position.y);
     }
 
+    #region Attack
     void Attack(Vector2 dir) {
         rb.velocity = dir * moveSpeed;
     }
@@ -54,13 +56,9 @@ public class Enemy : MonoBehaviour {
             Attack(dir);
         }
     }
-
+    #endregion
 
     #region BeingAttacked
-
-    public void BeDisabled() {
-
-    }
 
     public void MeleeAttack(int damage) {
         TakeDamage(damage);
@@ -74,7 +72,6 @@ public class Enemy : MonoBehaviour {
     }
 
     public void ArrowAttack(Vector2 from, float force, int damage) {
-
         rb.velocity = from * force;
         Invoke("KnockStop", 0.05f);
         if (!alert) {
@@ -106,15 +103,6 @@ public class Enemy : MonoBehaviour {
         TurnAlert();
     }
 
-    float DistanceTo(Hero hero) {
-        return (hero.transform.position - transform.position).magnitude;
-    }
-
-    Vector2 DirectionTo(Hero hero) {
-        Vector3 dir = hero.transform.position - transform.position;
-        return new Vector2(dir.x, dir.y).normalized;
-    }
-
     public void TurnAlert() {
         alertAnim.SetActive(true);
         Invoke("TurnOffAlertAnim", 1f);
@@ -124,5 +112,17 @@ public class Enemy : MonoBehaviour {
     void TurnOffAlertAnim() {
         alertAnim.SetActive(false);
     }
+    #endregion
+
+    #region Utility
+    float DistanceTo(Hero hero) {
+        return (hero.transform.position - transform.position).magnitude;
+    }
+
+    Vector2 DirectionTo(Hero hero) {
+        Vector3 dir = hero.transform.position - transform.position;
+        return new Vector2(dir.x, dir.y).normalized;
+    }
+
     #endregion
 }

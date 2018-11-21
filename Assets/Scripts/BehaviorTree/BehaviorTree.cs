@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace MyBehaviorTree {
     public class BehaviorTree : MonoBehaviour {
-
         public Stack<ITreeNode> path;
         public ITreeNode activeNode;
         public NodeStatus lastStatus;

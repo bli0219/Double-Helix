@@ -12,7 +12,8 @@ public class MeleeWeapon : MonoBehaviour {
         if (other.tag == "Enemy") {
             other.GetComponent<Enemy>().MeleeAttack(damage);
             if (disable) {
-                other.GetComponent<Enemy>().BeDisabled();
+                // WHAT?
+                //other.GetComponent<Enemy>().BeDisabled();
             }
         }    
     }

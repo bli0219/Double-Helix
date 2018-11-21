@@ -153,10 +153,6 @@ public class Hero : MonoBehaviour {
     }
 
     public void ApproachTarget() {
-
-        
-
-
         if (ai.status != NodeStatus.Running) {
             StartCoroutine("ApproachTargetCR");
         }

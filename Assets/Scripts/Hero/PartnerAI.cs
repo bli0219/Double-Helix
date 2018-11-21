@@ -27,11 +27,30 @@ public class PartnerAI : MonoBehaviour {
     }
 
     void BuildBT() {
-        var root = new NaiveRepeater("root", bt);
-        var riskSwitch = new ConditionNode("riskSwitch", RiskBranch, bt);
-        var riskyPlay = new SequenceNode("riskyPlay", bt);
+        var rootRepeat = new NaiveRepeater("rootRepeat", bt);
+        //var riskSwitch = new ConditionNode("riskSwitch", RiskBranch, bt);
+        var riskSel = new SelectorNode("riskSel", bt);
+        var attackSeq = new SequenceNode("attackSeq", bt);
+        var defendSeq = new SequenceNode("defendSeq", bt);
+        var attackTarget = new ActionNode("attackTarget", AttackTarget, bt);
+        var approachTarget = new ActionNode("approachTarget", ApporachTarget, bt);
+        var moveAroundTarget = new ActionNode("moveAroundTarget", MoveAroundTarget, bt);
         var safePlay = new SequenceNode("safePlay", bt);
         var meleeAttack = new ActionNode("meleeAttack ", hero.MeleeAttack, bt);
+
+        rootRepeat.Build(
+            riskSel.Build(
+                attackSeq.Build(
+                    approachTarget,
+                    attackTarget
+                ),
+                defendSeq.Build(
+                    approachTarget,
+                    moveAroundTarget,
+                    attackTarget
+                )
+            )
+        );
     }
 
     #region Action
@@ -64,7 +83,7 @@ public class PartnerAI : MonoBehaviour {
     void FindPath() {
         start = NodeManager.Instance.NearestNode(this.gameObject);
         goal = NodeManager.Instance.NearestNode(target.gameObject);
-        path = pathFinder.OptimalPath(start, goal);
+        path = pathFinder.AStarPath(start, goal);
     }
 
     void MoveAlongPath() {

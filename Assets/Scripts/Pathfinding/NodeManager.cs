@@ -75,6 +75,20 @@ public class NodeManager : MonoBehaviour {
         }
     }
 
+    public bool Contains(Node start, Node end) {
+        bool found1 = false;
+        bool found2 = false;
+        while (!found1 || !found2) {
+            foreach(List<Node> row in nodeMap) {
+                foreach (Node node in row) {
+                    if (node == start) found1 = true;
+                    if (node == end) found2 = true;
+                }
+            }
+        }
+        return found1 && found2;
+    }
+
     public Node NearestNode(GameObject go) {
         Vector3 enemyPos = go.transform.position;
         int numX = (int)Mathf.Round((enemyPos.x - bottomLeft.x) / dist);

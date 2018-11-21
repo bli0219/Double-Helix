@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Wintellect.PowerCollections;
 
-public class PathFinder : MonoBehaviour {
+public class PathFinder {
 
     // Use this for initialization
     OrderedSet<Node> open;
@@ -13,7 +13,7 @@ public class PathFinder : MonoBehaviour {
     Node goal;
     Node current;
 
-    void Awake() {
+    public PathFinder() {
         map = NodeManager.Instance.nodeMap;
         open = new OrderedSet<Node>();
         closed = new HashSet<Node>();
@@ -23,22 +23,11 @@ public class PathFinder : MonoBehaviour {
         map = NodeManager.Instance.nodeMap;
     }
 
-    // Recalculate Path
-    //public List<Node> BestPath(Node start, Node goal) {
-    //    a_star.Initialize(start, goal);
-    //    return a_star.OptimalPath();
-    //}
+    public bool Initialize(Node _start, Node _goal) {
 
-
-
-    public float h_sqrDist(Node node) {
-        return Vector2.SqrMagnitude(goal.pos - node.pos);
-    }
-
-    public void GetMap(List<List<Node>> _map) {
-        map = _map;
-    }
-    public void Initialize(Node _start, Node _goal) {
+        if (!NodeManager.Instance.Contains(_start, _goal)) {
+            return false;
+        }
 
         start = _start;
         goal = _goal;
@@ -56,9 +45,9 @@ public class PathFinder : MonoBehaviour {
         start.g = 0f;
         start.CalcF();
         open.Add(start);
+        return true;
     }
 
-    // Path is from next node to goal
     public List<Node> RecoverPath(Node goal) {
         List<Node> path = new List<Node>();
         path.Add(goal);
@@ -73,18 +62,13 @@ public class PathFinder : MonoBehaviour {
         return path;
     }
 
-    public List<Node> OptimalPath(Node _start, Node _goal) {
+    public List<Node> AStarPath(Node _start, Node _goal) {
         start = _start;
         goal = _goal;
 
-        int count = 0;
-        int count2 = 0;
         while (open.Count != 0) {
-            count++; 
             current = open.GetFirst();
             if (current == goal) {
-                Debug.Log(count + " times while loop");
-                Debug.Log(count + " times add");
                 return RecoverPath(current);
             }
             open.RemoveFirst();
@@ -106,16 +90,15 @@ public class PathFinder : MonoBehaviour {
                         Debug.Log(neighbor.parent);
                     }
                     open.Add(neighbor);
-                    count2++;
                 }
-
-                //better path since new_g < neighbor.g, update neighbor
-
             }
         }
-
         Debug.LogError("No path found.");
         return null;
+    }
+
+    public float h_sqrDist(Node node) {
+        return Vector2.SqrMagnitude(goal.pos - node.pos);
     }
 
     float Heuristic(Node a, Node b) {
