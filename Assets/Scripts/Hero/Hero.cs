@@ -152,6 +152,17 @@ public class Hero : MonoBehaviour {
         dashing = false;
     }
 
+    public void MoveAroundTarget() {
+        if (ai.status != NodeStatus.Running) {
+            StartCoroutine("MoveAroundTargetCR");
+        }
+    }
+
+
+    IEnumerator MoveAroundTargetCR() {
+        yield return new WaitForSeconds(0.5f);
+    }
+
     public void ApproachTarget() {
         if (ai.status != NodeStatus.Running) {
             StartCoroutine("ApproachTargetCR");

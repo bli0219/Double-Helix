@@ -32,9 +32,8 @@ public class PartnerAI : MonoBehaviour {
         var riskSel = new SelectorNode("riskSel", bt);
         var attackSeq = new SequenceNode("attackSeq", bt);
         var defendSeq = new SequenceNode("defendSeq", bt);
-        var attackTarget = new ActionNode("attackTarget", AttackTarget, bt);
-        var approachTarget = new ActionNode("approachTarget", ApporachTarget, bt);
-        var moveAroundTarget = new ActionNode("moveAroundTarget", MoveAroundTarget, bt);
+        var approachTarget = new ActionNode("approachTarget", hero.ApproachTarget, bt);
+        var moveAroundTarget = new ActionNode("moveAroundTarget", hero.MoveAroundTarget, bt);
         var safePlay = new SequenceNode("safePlay", bt);
         var meleeAttack = new ActionNode("meleeAttack ", hero.MeleeAttack, bt);
 
@@ -42,12 +41,12 @@ public class PartnerAI : MonoBehaviour {
             riskSel.Build(
                 attackSeq.Build(
                     approachTarget,
-                    attackTarget
+                    meleeAttack
                 ),
                 defendSeq.Build(
                     approachTarget,
                     moveAroundTarget,
-                    attackTarget
+                    meleeAttack
                 )
             )
         );
