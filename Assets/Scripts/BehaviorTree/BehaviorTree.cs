@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace MyBehaviorTree {
     public class BehaviorTree : MonoBehaviour {
+
         public Stack<ITreeNode> path;
         public ITreeNode activeNode;
         public NodeStatus lastStatus;
@@ -11,16 +12,24 @@ namespace MyBehaviorTree {
         public bool actionTaken;
         public ITreeNode root;
 
-        void FixedUpdate() {
-            Tick();
+
+        public void Build(ITreeNode _root) {
+            path = new Stack<ITreeNode>();
+            root = _root;
+            path.Push(root);
         }
 
-        public void Tick() {
-            actionTaken = false;
+        void Update() {
             while (!actionTaken) {
+                Debug.Log("Ticking " + path.Peek().Name);
                 path.Peek().Tick();
             }
         }
+        
+        //public void OneTick() {
+        //    Debug.Log("Ticking " + path.Peek().Name);
+        //    path.Peek().Tick();
+        //}
 
         public void PrintPath() {
             string str = "";
@@ -39,9 +48,20 @@ namespace MyBehaviorTree {
             Debug.Log("Traversal Ended.");
         }
 
+        public void Run() {
+            actionTaken = true;
+            lastStatus = NodeStatus.Running;
+        }
+
         public void Finish(NodeStatus status) {
+            if (path.Peek().GetType()==typeof(ActionNode)) {
+                actionTaken = false;
+            }
+            Debug.Log("popping " + path.Peek().Name + " as " + status);
             path.Pop();
             lastStatus = status;
         }
+
+
     }
 }

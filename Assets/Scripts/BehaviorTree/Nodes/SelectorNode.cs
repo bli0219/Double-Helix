@@ -18,7 +18,6 @@ namespace MyBehaviorTree {
                 try {
                     activeChild = 0;
                     BehaviorTree.path.Push(Children[activeChild]);
-                    
                 } catch {
                     Debug.LogError("Empty Children[]");
                 }
@@ -27,15 +26,17 @@ namespace MyBehaviorTree {
                 // some child ticked
                 if (BehaviorTree.lastStatus == NodeStatus.Success) {
                     // succeed if any success
+                    activeChild = -1;
                     BehaviorTree.Finish(NodeStatus.Success);
                 } else {
                     // no success yet
                     if (activeChild < Children.Length-1) {
-                        // if last activeChild was not the last
+                        // if last activeChild is not the last
                         activeChild++;
                         BehaviorTree.path.Push(Children[activeChild]);
                     } else {
                         // reached the last, still no success
+                        activeChild = -1;
                         BehaviorTree.Finish(NodeStatus.Failure);
                     }
                 }

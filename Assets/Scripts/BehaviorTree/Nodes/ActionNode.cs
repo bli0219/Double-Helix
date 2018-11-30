@@ -9,23 +9,17 @@ namespace MyBehaviorTree {
         // The action to perform, passed by user when initialized
         // Needs to be defined wiht clear feedback (success, failure, running)
         Action Task;
-
-        public ActionNode(string name, Action task, BehaviorTree tree) {
+        
+        public ActionNode(string name, Action task, BehaviorTree behaviorTree) {
             Task = task;
             Name = name;
-            BehaviorTree = tree;
-            
-            //hero = BehaviorTree.hero;
+            BehaviorTree = behaviorTree;
         }
 
-        // Task() 
+        // Task() will call Finish(status) to pop this node
         public override void Tick() {
-            BehaviorTree.actionStatus = NodeStatus.Running;
+            BehaviorTree.Run();
             Task();
-            if (BehaviorTree.actionStatus != NodeStatus.Running) {
-                BehaviorTree.Finish(BehaviorTree.actionStatus);
-            }
         }
-
     }
 }

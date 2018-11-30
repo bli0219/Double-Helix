@@ -21,12 +21,14 @@ namespace MyBehaviorTree {
 
             } else { // some child already ticked, check result
                 if (BehaviorTree.lastStatus == NodeStatus.Failure) { // fail if any failure
+                    activeChild = -1;
                     BehaviorTree.Finish(NodeStatus.Failure);
                 } else { // no failure yet
                     if (activeChild < Children.Length - 1) { // if last activeChild was not the last
                         activeChild++;
                         BehaviorTree.path.Push(Children[activeChild]);
                     } else { // reached the last, still no failure
+                        activeChild = -1;
                         BehaviorTree.Finish(NodeStatus.Success);
                     }
                 }
