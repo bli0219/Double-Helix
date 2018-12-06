@@ -22,36 +22,6 @@ public class PartnerAI : MonoBehaviour {
         {"RiskThreshold", 0.5f }
     };
 
-    void Start() {
-        BuildBT();
-    }
-
-    void BuildBT() {
-        var rootRepeat = new NaiveRepeater("rootRepeat", bt);
-        //var riskSwitch = new ConditionNode("riskSwitch", RiskBranch, bt);
-        var riskSel = new SelectorNode("riskSel", bt);
-        var attackSeq = new SequenceNode("attackSeq", bt);
-        var defendSeq = new SequenceNode("defendSeq", bt);
-        var approachTarget = new ActionNode("approachTarget", hero.ApproachTarget, bt);
-        var moveAroundTarget = new ActionNode("moveAroundTarget", hero.MoveAroundTarget, bt);
-        var safePlay = new SequenceNode("safePlay", bt);
-        var meleeAttack = new ActionNode("meleeAttack ", hero.MeleeAttack, bt);
-
-        rootRepeat.Build(
-            riskSel.Build(
-                attackSeq.Build(
-                    approachTarget,
-                    meleeAttack
-                ),
-                defendSeq.Build(
-                    approachTarget,
-                    moveAroundTarget,
-                    meleeAttack
-                )
-            )
-        );
-    }
-
     #region Action
 
     #endregion
@@ -75,9 +45,7 @@ public class PartnerAI : MonoBehaviour {
         if (Vector3.Distance(transform.position, target.transform.position) < 1f) {
 
         }
-
     }
-
 
     void FindPath() {
         start = NodeManager.Instance.NearestNode(this.gameObject);
@@ -86,12 +54,6 @@ public class PartnerAI : MonoBehaviour {
     }
 
     void MoveAlongPath() {
-        if (path.Count != 0) {
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.y), path[0].pos) < 0.05f) {
-                path.RemoveAt(0);
-            } else {
-                hero.MoveToPoint(path[0].pos);
-            }
-        }
+
     }
 }

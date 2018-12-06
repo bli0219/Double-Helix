@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour {
 
     Camera camera;
-    public GameObject player;
+    GameObject player;
     public GameObject boss;
     Vector3 offset; // y offset
 
@@ -13,6 +13,7 @@ public class CameraFollow : MonoBehaviour {
         camera = GetComponent<Camera>();
     }
     void Start() {
+        player = Player.instance.gameObject;
         offset = transform.position - player.transform.position;
     }
 

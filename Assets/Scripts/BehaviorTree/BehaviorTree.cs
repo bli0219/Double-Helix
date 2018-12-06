@@ -12,15 +12,17 @@ namespace MyBehaviorTree {
         public bool actionTaken;
         public ITreeNode root;
 
+        void Awake() {
+            path = new Stack<ITreeNode>();
+        }
 
         public void Build(ITreeNode _root) {
-            path = new Stack<ITreeNode>();
             root = _root;
             path.Push(root);
         }
 
         void Update() {
-            while (!actionTaken) {
+            while (!actionTaken && path.Count>0) {
                 Debug.Log("Ticking " + path.Peek().Name);
                 path.Peek().Tick();
             }
@@ -62,6 +64,20 @@ namespace MyBehaviorTree {
             lastStatus = status;
         }
 
+        public void FinishSuccess() {
+            Finish(NodeStatus.Success);
+        }
+        public void FinishFailure() {
+            Finish(NodeStatus.Failure);
+        }
+
+        public void Finish(bool success) {
+            if (success) {
+                Finish(NodeStatus.Success);
+            } else {
+                Finish(NodeStatus.Failure);
+            }
+        }
 
     }
 }

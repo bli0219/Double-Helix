@@ -10,55 +10,125 @@ public class Hero : MonoBehaviour {
     Vector3 arrowPos = new Vector3(0.15f, 0f, 0f);
     public GameObject arrowPrefab;
     GameObject arrow;
+    Animator anim;
+    GameObject hitbox;
+    public Enemy target;
+    public PathFinder pf;
+    public BehaviorTree bt;
+    List<Node> path;
+
+    Vector3 faceDir;
     float bowChargeLimit = 1f;
     float chargeTime = 0f;
-    Vector3 faceDir;
     public float speed = 2f;
     public float dashSpeed = 5f;
     public Level level = Level.hill;
     public int health = 100;
-    Animator anim;
-    GameObject hitbox;
-    Enemy target;
-    public PathFinder pathFinder;
-    public PartnerAI ai;
-
+    float meleeRange = 1f;
+    float attackRange = 0.5f;
     int hitCount = 0;
     bool disabled = false;
     bool aiming = false;
     bool dashing = false;
     bool dodging = false;
-
-
+    bool attacked = false;
+    public bool usingAI = false;
+    int attackCount = 0;
 
     SortedDictionary<float ,float > dict;
+
+    #region MonoBehavior
 
     void Awake () {
         faceDir = Vector3.zero;
         rb = GetComponent<Rigidbody2D>();
         arrows = new List<GameObject>();
         hitbox = transform.GetChild(0).gameObject;
-        
+
+        if (usingAI) {
+            bt = GetComponent<BehaviorTree>();
+            //pf = new PathFinder();
+            BuildTree();
+        }
+    }
+
+    void Start() {
+        target = EnemyManager.Instance.GetTarget(Level.hill);    
+    }
+
+    void BuildTree() {
+        var rootRepeat = new NaiveRepeater("rootRepeat", bt);
+        //var riskSwitch = new ConditionNode("riskSwitch", RiskBranch, bt);
+        //var approachAttack = new SequenceNode("approachAttack", bt);
+        //var pathFinding = new SelectorNode("pathFinding", bt);
+        //var repeatTillFail = new SuccessRepeater("repeatTillFail", bt);
+        //var approachSeq = new SequenceNode("repeatSq", bt);
+        //var findPath = new ActionNode("findPath", FindPath, bt);
+        //var pathApproach = new ActionNode("pathApproach", PathApproach, bt);
+        //var closeToTarget = new ActionNode("checkDistance", CloseToTarget, bt);
+        var tryMeleeAttack = new SequenceNode("tryMeleeAttack", bt);
+        var getInRange = new ActionNode("getInRange", GetInRange, bt);
+        var meleeAttackAction = new ActionNode("meleeAttackAction", MeleeAttackAction, bt);
+        var idleAction = new ActionNode("idleAction", IdleAction, bt);
+
+        rootRepeat.Build(
+            tryMeleeAttack.Build(
+                getInRange,
+                meleeAttackAction
+            )
+        );
+        bt.Build(rootRepeat);
+
+        //rootRepeat.Build(
+        //    approachAttack.Build(
+        //         pathFinding.Build(
+        //             repeatTillFail.Build(
+        //                 approachSeq.Build(
+        //                     findPath,
+        //                     pathApproach
+        //                 )
+        //             ),
+        //             closeToTarget 
+        //        ),
+        //        tryMeleeAttack.Build(
+        //            getInRange,
+        //            meleeAttackAction
+        //        )
+        //    )
+        //);
     }
 
     void Update() {
+
+        EnemyDetection();
+
         if (arrow != null) {
             arrow.transform.localPosition = arrowPos;
         }
     }
 
     void OnTriggerEnter2D(Collider2D other) {
-        if (other.tag == "Enemy") {
-            if (dashing) {
-                Debug.Log("Stop");
-                rb.velocity = Vector2.zero;
-            } else {
-                Debug.Log("not dashing");
-            }
+        //if (other.tag == "Enemy") {
+        //    if (dashing) {
+        //        Debug.Log("Stop");
+        //        rb.velocity = Vector2.zero;
+        //    } else {
+        //        Debug.Log("not dashing");
+        //    }
+        //}
+        if (other.tag == "EnemyHitbox") {
+            Attacked(other);
         }
     }
 
-    #region Actions
+    #endregion
+
+    #region Unit Action
+
+    void Stop() {
+        rb.velocity = Vector2.zero;
+    }
+
     public void StandStill() {
         rb.velocity = Vector2.zero;
     }
@@ -152,10 +222,114 @@ public class Hero : MonoBehaviour {
         dashing = false;
     }
 
-    public void MoveAroundTarget() {
-        if (ai.status != NodeStatus.Running) {
-            StartCoroutine("MoveAroundTargetCR");
+    void Attacked(Collider2D other) {
+        attacked = true;
+        attackCount++;
+        rb.velocity = Direction2D(other.transform).normalized * -2f;
+        Invoke("ResumeFromAttack", 0.2f);
+        //    anim.SetBool("Attacked", true);
+        //    Invoke("ResumeFromAttack", 0.5f);
+
+    }
+
+    void ResumeFromAttack() {
+        attacked = false;
+        rb.velocity = Vector2.zero;
+    }
+
+    public void MeleeAttack() {
+        
+    }
+
+
+    #endregion
+
+
+
+    #region AI Action
+
+    void Finish(bool success) {
+        if (success) {
+            bt.FinishSuccess();
+        } else {
+            bt.FinishFailure();
         }
+    } 
+    void CloseToTarget() {
+        Finish(DistanceToTarget() < 1f);
+    }
+
+    void NaiveApproach() {
+        MoveToPoint(target.PositionV2());
+    }
+
+    void PathApproach() {
+        if (path.Count != 0) {
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.y), path[0].pos) < 0.05f) {
+                path.RemoveAt(0);
+            } else {
+                MoveToPoint(path[0].pos);
+            }
+        }
+        Invoke("ReturnSuccess", 0.2f);
+    }
+
+    void ReturnSuccess() {
+        bt.FinishSuccess();
+    }
+
+    void FindPath() {
+
+        if (DistanceToTarget() < 1f) {
+            bt.FinishFailure();
+        }
+        Node start = NodeManager.Instance.NearestNode(gameObject);
+        Node goal = NodeManager.Instance.NearestNode(target.gameObject);
+        path = pf.AStarPath(start, goal);
+        // AStarPath returns null when no path found
+        if (path != null) {
+            bt.FinishSuccess();
+        } else {
+            bt.FinishFailure();
+        }
+    }
+
+    void GetInRange() {
+        StartCoroutine("GetInRangeCR");
+    }
+
+    IEnumerator GetInRangeCR() {
+        float dist = DistanceToTarget();
+        while (!attacked && dist > attackRange) {
+            NaiveApproach();
+            dist = DistanceToTarget();
+            yield return null;
+        }
+        if (attacked) {
+            bt.FinishFailure();
+        } else {
+            bt.FinishSuccess();
+        }
+    }
+
+    void MeleeAttackAction() {
+        Debug.Log("hello");
+        StartCoroutine("MeleeAttackCR");
+        //hitbox.SetActive(true);
+    }
+
+    IEnumerator MeleeAttackCR() {
+        int count = attackCount;
+        yield return new WaitForSecondsRealtime(0.3f);
+        bt.Finish(count == attackCount);
+    }
+
+    void IdleAction() {
+        Debug.Log("IDLE");
+    }
+
+    void MoveAroundTarget() {
+        StartCoroutine("MoveAroundTargetCR");
     }
 
 
@@ -163,18 +337,7 @@ public class Hero : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
     }
 
-    public void ApproachTarget() {
-        if (ai.status != NodeStatus.Running) {
-            StartCoroutine("ApproachTargetCR");
-        }
-    }
-
-    public void MeleeAttack() {
-        if (ai.status != NodeStatus.Running) {
-            StartCoroutine("MeleeAttackCR");
-        }
-    }
-
+    /*
     // status set to be Running in Tick()
     IEnumerator MeleeAttackCR() {
         RotateToPoint(target.transform.position);
@@ -188,14 +351,23 @@ public class Hero : MonoBehaviour {
         yield return new WaitForSecondsRealtime(0.2f);
         disabled = false;
         ai.status = hitCount > 0 ? NodeStatus.Success : NodeStatus.Failure;
-    }
-
-
+    }*/
 
 
     #endregion
 
     #region Utility
+
+    float DistanceToTarget() {
+        //TODO: Can be optimized
+        return Vector3.Distance(target.transform.position, transform.position);
+    }
+
+    Vector2 Direction2D(Transform other) {
+        Vector3 v3 = other.position - transform.position;
+        return new Vector2(v3.x, v3.y);
+    }
+
     public void GetArrow() {
         foreach (GameObject a in arrows) {
             if (!a.activeSelf) {
