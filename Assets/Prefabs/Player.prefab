@@ -80,7 +80,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4251872874274570
 Transform:
   m_ObjectHideFlags: 1
@@ -235,10 +235,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arrowPrefab: {fileID: 1667074030026364, guid: a3c2c331da4e4e44e86d8258056a8925,
     type: 2}
+  bt: {fileID: 0}
   speed: 2
   dashSpeed: 5
   level: 1
-  sword: {fileID: 1157514457469214}
+  health: 100
+  usingAI: 0
 --- !u!114 &114368486646556606
 MonoBehaviour:
   m_ObjectHideFlags: 1

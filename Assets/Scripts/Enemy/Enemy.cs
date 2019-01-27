@@ -8,8 +8,8 @@ public class Enemy : MonoBehaviour {
     Rigidbody2D rb;
     GameObject alertAnim;
     EnemyManager manager;
-    Hero target;
-
+    public Hero target;
+    GameObject hitbox;
     #endregion
 
     #region parameters
@@ -35,10 +35,11 @@ public class Enemy : MonoBehaviour {
         //attraction = Random.Range(-5f, 5f);
         rb = GetComponent<Rigidbody2D>();
         alertAnim = transform.GetChild(0).gameObject;
+        hitbox = transform.GetChild(1).gameObject;
     }
 
     void Update() {
-
+        TryAttack(); 
     }
 
     public Vector2 PositionV2() {
@@ -47,12 +48,14 @@ public class Enemy : MonoBehaviour {
 
     #region Attack
     void Attack(Vector2 dir) {
-        rb.velocity = dir * moveSpeed;
+        //rb.velocity = dir * moveSpeed;
+        hitbox.SetActive(true);
     }
 
     void TryAttack() {
-        if (alert && Vector2.Distance(target.transform.position, transform.position) < attackRange) {
+        if (Vector2.Distance(target.transform.position, transform.position) < attackRange) {
             Vector2 dir = target.transform.position - transform.position;
+            transform.right = dir;
             Attack(dir);
         }
     }
@@ -92,18 +95,21 @@ public class Enemy : MonoBehaviour {
     #endregion
 
     #region HeroDetection
-    void Warn() {
-        //anim
-        Debug.Log(manager);
-        manager.WarnNearby(this);
-    }
+    //void Warn() {
+    //    //anim
+    //    Debug.Log(manager);
+    //    manager.WarnNearby(this);
+    //}
 
     public void SeeHero(Hero hero) {
-        target = hero;
-        TurnAlert();
+        if (target==null) {
+            target = hero;
+            TurnAlert();
+        }
     }
 
     public void TurnAlert() {
+        
         alertAnim.SetActive(true);
         Invoke("TurnOffAlertAnim", 1f);
         alert = false;

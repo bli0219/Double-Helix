@@ -7,12 +7,15 @@ public class Player : MonoBehaviour {
     Vector3 mousePos = Vector3.zero;
     Vector3 faceDir = Vector3.zero;
     Vector3 moveDir = Vector3.zero;
-
+    public static Player instance;
     public PlayerInput input;
     public Hero hero;
     bool charging = false;
     public bool usingMouse;
 
+    private void Awake() {
+        instance = this;
+    }
     void Start() {
         input = PlayerInput.instance;
     }

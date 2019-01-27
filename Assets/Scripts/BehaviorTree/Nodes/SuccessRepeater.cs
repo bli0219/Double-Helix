@@ -22,7 +22,7 @@ namespace MyBehaviorTree {
                 } else {
                     BehaviorTree.Finish(NodeStatus.Failure);
                 }
-            }
+            } 
         }
     }
 }
